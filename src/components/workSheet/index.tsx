@@ -190,7 +190,7 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                             rightIcon={<Trash size={14} />}
                             onClick={() => setExchangeWorkInfo(null)}
                         >
-                            삭제
+                            취소
                         </Button>
                     </Box>
                 </ExchangeWorkContainer>
