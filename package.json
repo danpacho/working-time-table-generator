@@ -1,0 +1,32 @@
+{
+    "name": "working-time-table",
+    "private": false,
+    "version": "1.0.0",
+    "author": "danpacho",
+    "description": "복무 중에 발생하는 업무 분할, 일상 문제를 프로그램을 통해 해결하여 삶을 윤택하게 만들자는 취지로 제작",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@mantine/core": "^4.1.2",
+        "@mantine/dates": "^4.1.2",
+        "@mantine/hooks": "^4.1.2",
+        "@mantine/modals": "^4.1.2",
+        "@mantine/notifications": "^4.1.2",
+        "@types/styled-components": "^5.1.24",
+        "dayjs": "^1.11.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "styled-components": "^5.3.5",
+        "tabler-icons-react": "^1.44.0"
+    },
+    "devDependencies": {
+        "@types/react": "^17.0.33",
+        "@types/react-dom": "^17.0.10",
+        "@vitejs/plugin-react": "^1.0.7",
+        "typescript": "^4.5.4",
+        "vite": "^2.9.0"
+    }
+}
