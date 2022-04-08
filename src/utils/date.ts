@@ -106,7 +106,7 @@ const getWorkCycleInfo = <T>({
     workPerDay,
     workerList,
 }: GetWorkerCycleInfoProps<T>) => {
-    const cycleWorkInfo = getIterationArray(0, cycle).reduce<WorkInfoType<T>[]>(
+    const cycleWorkInfo = getIterationArray(0, cycle - 1).reduce<WorkInfoType<T>[]>(
         (accCycleWorkInfo, _, order) => {
             if (order === 0) {
                 accCycleWorkInfo.push(
