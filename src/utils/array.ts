@@ -1,5 +1,5 @@
 const getNumberBetweenMinMax = (min: number, max: number) =>
-    Math.floor(Math.random() * max) + min;
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
 const getIterationArray = (startNum: number, lastNumber: number) =>
     Array.from({ length: lastNumber + 1 }, (_, i) => i + startNum);
