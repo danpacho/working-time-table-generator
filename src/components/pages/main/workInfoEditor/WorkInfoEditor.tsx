@@ -18,6 +18,7 @@ import {
 } from "../../../../utils/date";
 
 import WorkSheet from "../../../workSheet";
+import { WORK_INFO } from "../../../../constants/workInfo";
 
 interface SlectDateProps {
     agentList: string[];
@@ -186,6 +187,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         onChange={(cycle) => setCycle(cycle!)}
                         min={1}
                     />
+
                     <Button
                         variant="filled"
                         color="teal"
@@ -194,7 +196,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                             setWorkInfoArray(
                                 getWorkCycleInfo({
                                     startDate: workStartDate!,
-                                    workPerDay: 5,
+                                    workPerDay: WORK_INFO.WORK_PER_DAY,
                                     workerList: agentList,
                                     cycle,
                                 })
