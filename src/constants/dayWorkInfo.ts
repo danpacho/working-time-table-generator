@@ -10,8 +10,8 @@ const DAY_WORK_INFO: {
     {
         time: "9:00 ~ 10:30",
         workHour: "1시간 30분",
-        color: "indigo",
-        borderColor: "blue3",
+        color: "teal",
+        borderColor: "teal5",
         workIndex: 0,
     },
     {
@@ -22,25 +22,18 @@ const DAY_WORK_INFO: {
         workIndex: 1,
     },
     {
-        time: "13:30 ~ 15:00",
-        workHour: "1시간 30분",
+        time: "13:30 ~ 15:15",
+        workHour: "1시간 45분",
         color: "indigo",
         borderColor: "blue3",
         workIndex: 2,
     },
     {
-        time: "15:00 ~ 16:00",
-        workHour: "1시간",
-        color: "teal",
-        borderColor: "teal4",
+        time: "15:15 ~ 17:00",
+        workHour: "1시간 45분",
+        color: "indigo",
+        borderColor: "blue3",
         workIndex: 3,
-    },
-    {
-        time: "16:00 ~ 17:00",
-        workHour: "1시간",
-        color: "teal",
-        borderColor: "teal4",
-        workIndex: 4,
     },
 ];
 
