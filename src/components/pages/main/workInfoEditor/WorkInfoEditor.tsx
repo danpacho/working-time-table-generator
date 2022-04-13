@@ -19,6 +19,7 @@ import {
 
 import WorkSheet from "../../../workSheet";
 import { WORK_INFO } from "../../../../constants/workInfo";
+import { WORK_INFO_ARRAY_KEY } from "../../../../constants/localStorageKey";
 
 interface SlectDateProps {
     agentList: string[];
@@ -31,13 +32,12 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
     const [workInfoArray, setWorkInfoArray] = useLocalStorage<
         WorkInfoType<string>[]
     >({
-        key: "WORK_INFO",
+        key: WORK_INFO_ARRAY_KEY,
         defaultValue: [],
     });
 
     const [openCalendar, setOpenCalander] = useState(false);
     const [openeReset, setOpenReset] = useState(false);
-
     const [cycle, setCycle] = useState(1);
 
     const [workStartDate, setWorkStartDate] = useState<Date | null>(
@@ -192,13 +192,13 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         variant="filled"
                         color="teal"
                         rightIcon={<Confetti size={18} />}
-                        onClick={() => {
+                        onClick={async () => {
                             setWorkInfoArray(
-                                getWorkCycleInfo({
+                                await getWorkCycleInfo({
                                     startDate: workStartDate!,
                                     workPerDay: WORK_INFO.WORK_PER_DAY,
                                     workerList: agentList,
-                                    cycle,
+                                    cycle: cycle,
                                 })
                             );
                             setOpenCalander(false);
