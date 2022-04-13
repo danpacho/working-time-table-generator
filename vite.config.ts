@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
         proxy: {
             "/getRestDeInfo": {
-                target: "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
+                target: "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
                 changeOrigin: true,
                 secure: false,
                 rewrite: (path) => path.replace(/^\/getRestDeInfo/, ""),
