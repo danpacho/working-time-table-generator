@@ -6,7 +6,7 @@ export default defineConfig({
     plugins: [react()],
     server: {
         proxy: {
-            "/getRestDeInfo": {
+            "/api/getRestDeInfo": {
                 target: "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
                 changeOrigin: true,
                 secure: false,

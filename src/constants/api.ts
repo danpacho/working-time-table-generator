@@ -1,4 +1,4 @@
-const API_URL = "/getRestDeInfo";
+const API_URL = "/api/getRestDeInfo";
 
 export interface API_PARAM_CONFIG {
     solYear?: number;
