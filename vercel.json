@@ -1,10 +1,6 @@
 {
     "redirects": [
         {
-            "source": "https://work-table.vercel.app/",
-            "destination": ""
-        },
-        {
             "source": "/getRestDeInfo",
             "destination": "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"
         }
