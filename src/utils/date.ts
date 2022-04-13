@@ -1,54 +1,13 @@
-const getNumberBetweenMinMax = (min: number, max: number) =>
-    Math.floor(Math.random() * max) + min;
-
-const getIterationArray = (startNum: number, lastNumber: number) =>
-    Array.from({ length: lastNumber + 1 }, (_, i) => i + startNum);
-
-const shuffle = <T>(array: T[]) => {
-    const arrayIndex = getIterationArray(0, array.length - 1);
-    const shuffle: T[] = [];
-
-    for (let i = 0; i < array.length; i++) {
-        const randomAccessor = getNumberBetweenMinMax(0, arrayIndex.length);
-        const arrayRandIndex = arrayIndex[randomAccessor];
-        shuffle.push(array[arrayRandIndex]);
-        arrayIndex.splice(randomAccessor, 1);
-    }
-    return shuffle;
-};
+import { API_PARAM_CONFIG, API_RESPONSE, API_URL } from "../constants/api";
+import { WORK_INFO } from "../constants/workInfo";
+import { getIterationArray, shuffle } from "./array";
+import { axiosGET } from "./axios";
 
 const DAY = ["일", "월", "화", "수", "목", "금", "토"] as const;
 const HOLLIDAY_INDEX = [0, 6];
 type DAY_TYPE = typeof DAY[number];
 
 const getDay = (time: string): DAY_TYPE => DAY[new Date(time).getDay()];
-
-const isHolliday = (time: Date) => HOLLIDAY_INDEX.includes(time.getDay());
-
-const getWorkingDay = (startDate: Date, workerNumber: number) => {
-    const extraIterationNumber = Math.ceil(workerNumber / 5) * 2;
-    const workDayList = getIterationArray(0, workerNumber + extraIterationNumber)
-        .map((dayIndex) => addDayToString(startDate, dayIndex))
-        .reduce<string[]>((acc, currDate) => {
-            const date = new Date(currDate);
-
-            if (!isHolliday(date)) {
-                return [...acc, currDate];
-            }
-
-            if (acc.includes(currDate)) {
-                const test = addDayToString(date, 1);
-                const testDate = new Date(test);
-                const validatedDate = isHolliday(testDate)
-                    ? addDayToString(testDate, 1)
-                    : test;
-                return [...acc, validatedDate];
-            }
-
-            return acc;
-        }, []);
-    return workDayList;
-};
 
 const addDayToString = (currentDate: Date, updateDayMount: number): string => {
     const addedDate = new Date(currentDate);
@@ -61,6 +20,74 @@ const addDayToString = (currentDate: Date, updateDayMount: number): string => {
     return `${year}-${month}-${date}`;
 };
 
+const isHolliday = (time: Date) => HOLLIDAY_INDEX.includes(time.getDay());
+
+const getNationalHolliday = async (
+    APIparams: Omit<API_PARAM_CONFIG, "ServiceKey">
+) => {
+    const { data } = await axiosGET<API_RESPONSE>({
+        url: API_URL,
+        params: {
+            ServiceKey: import.meta.env.VITE_API_KEY,
+            ...APIparams,
+        } as API_PARAM_CONFIG,
+    });
+    return data;
+};
+
+const numToDate = (dateNum: number) => {
+    const date = `${String(dateNum).slice(0, 4)}-${String(dateNum).slice(
+        4,
+        6
+    )}-${String(dateNum).slice(6, 8)}`;
+    return new Date(date);
+};
+
+const dateEqualizer = (date: Date) =>
+    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
+const nationalHolliday = (async () =>
+    await (
+        await getNationalHolliday({
+            _type: "json",
+            numOfRows: 30,
+            solYear: new Date().getFullYear(),
+        })
+    ).response.body.items.item.map(({ locdate }) =>
+        dateEqualizer(numToDate(locdate))
+    ))();
+
+const getWorkingDay = async (startDate: Date, workerNumber: number) => {
+    const extraIterationNumber =
+        Math.ceil(workerNumber / WORK_INFO.WORK_PER_DAY) * workerNumber;
+
+    const nationalHollidayData = await nationalHolliday;
+
+    const workDayList = getIterationArray(0, workerNumber + extraIterationNumber)
+        .map((dayIndex) => addDayToString(startDate, dayIndex))
+        .reduce<string[]>((accWorkDayList, currDate) => {
+            const date = new Date(currDate);
+
+            if (nationalHollidayData.includes(dateEqualizer(date)))
+                return accWorkDayList;
+
+            if (!isHolliday(date)) return [...accWorkDayList, currDate];
+
+            if (accWorkDayList.includes(currDate)) {
+                const test = addDayToString(date, 1);
+                const testDate = new Date(test);
+                const validatedDate = isHolliday(testDate)
+                    ? addDayToString(testDate, 1)
+                    : test;
+                return [...accWorkDayList, validatedDate];
+            }
+
+            return accWorkDayList;
+        }, []);
+
+    return workDayList;
+};
+
 interface GetWorkerInfoProps<WorkerListType> {
     workerList: WorkerListType[];
     startDate: Date;
@@ -71,18 +98,18 @@ export interface WorkInfoType<WorkerListType> {
     date: string;
     day: "일" | "월" | "화" | "수" | "목" | "금" | "토";
 }
-const getWorkInfo = <WorkerListType>({
+const getWorkInfo = async <WorkerListType>({
     startDate,
     workPerDay,
     workerList,
-}: GetWorkerInfoProps<WorkerListType>): WorkInfoType<WorkerListType>[] => {
+}: GetWorkerInfoProps<WorkerListType>): Promise<WorkInfoType<WorkerListType>[]> => {
     const shuffledWorker = shuffle(workerList);
     const shuffledWorkerLength = shuffledWorker.length;
 
-    const workingDay = getWorkingDay(startDate, shuffledWorkerLength);
-    const workInfo = getIterationArray(1, shuffledWorkerLength - 1)
+    const workingDay = await getWorkingDay(startDate, shuffledWorkerLength);
+    const workInfo = getIterationArray(1, shuffledWorkerLength)
         .map((_, index) =>
-            getIterationArray(workPerDay * index, workPerDay - 1).map(
+            getIterationArray(workPerDay * index, workPerDay).map(
                 (index) => shuffledWorker[index % shuffledWorkerLength]
             )
         )
@@ -100,39 +127,51 @@ interface GetWorkerCycleInfoProps<WorkerListType>
     extends GetWorkerInfoProps<WorkerListType> {
     cycle: number;
 }
-const getWorkCycleInfo = <T>({
+const getWorkCycleInfo = async <WorkerListType>({
     cycle,
     startDate,
     workPerDay,
     workerList,
-}: GetWorkerCycleInfoProps<T>) => {
-    const cycleWorkInfo = getIterationArray(0, cycle - 1).reduce<WorkInfoType<T>[]>(
-        (accCycleWorkInfo, _, order) => {
+}: GetWorkerCycleInfoProps<WorkerListType>) => {
+    const cycleWorkInfo = await getIterationArray(0, cycle).reduce<
+        Promise<WorkInfoType<WorkerListType>[]>
+    >(
+        async (
+            accCycleWorkInfo,
+            _,
+            order
+        ): Promise<WorkInfoType<WorkerListType>[]> => {
+            const resolvedAccCycleWorkInfo = await accCycleWorkInfo;
             if (order === 0) {
-                accCycleWorkInfo.push(
-                    ...getWorkInfo({
-                        startDate,
-                        workPerDay,
-                        workerList,
-                    })
-                );
-                return accCycleWorkInfo;
-            }
-
-            const lastWorkDate = accCycleWorkInfo[accCycleWorkInfo.length - 1].date;
-            accCycleWorkInfo.push(
-                ...getWorkInfo({
-                    startDate: new Date(addDayToString(new Date(lastWorkDate), 1)),
+                const firstCycleWorkInfo = await getWorkInfo({
+                    startDate,
                     workPerDay,
                     workerList,
-                })
-            );
-            return accCycleWorkInfo;
+                });
+                return [...resolvedAccCycleWorkInfo, ...firstCycleWorkInfo];
+            }
+
+            const lastSavedWorkDate =
+                resolvedAccCycleWorkInfo[resolvedAccCycleWorkInfo.length - 1].date;
+            const nextWork = await getWorkInfo({
+                startDate: new Date(addDayToString(new Date(lastSavedWorkDate), 1)),
+                workPerDay,
+                workerList,
+            });
+
+            return [...resolvedAccCycleWorkInfo, ...nextWork];
         },
-        []
+        Promise.resolve([])
     );
 
     return cycleWorkInfo;
 };
 
-export { getDay, isHolliday, getWorkInfo, getWorkCycleInfo, addDayToString };
+export {
+    getDay,
+    isHolliday,
+    getWorkInfo,
+    getWorkCycleInfo,
+    addDayToString,
+    getNationalHolliday,
+};
