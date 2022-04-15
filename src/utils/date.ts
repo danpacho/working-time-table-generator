@@ -9,15 +9,14 @@ type DAY_TYPE = typeof DAY[number];
 
 const getDay = (time: string): DAY_TYPE => DAY[new Date(time).getDay()];
 
+const dateEqualizer = (date: Date) =>
+    `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
 const addDayToString = (currentDate: Date, updateDayMount: number): string => {
     const addedDate = new Date(currentDate);
     addedDate.setDate(currentDate.getDate() + updateDayMount);
 
-    const year = addedDate.getFullYear();
-    const month = addedDate.getMonth() + 1;
-    const date = addedDate.getDate();
-
-    return `${year}-${month}-${date}`;
+    return dateEqualizer(addedDate);
 };
 
 const isHolliday = (time: Date) => HOLLIDAY_INDEX.includes(time.getDay());
@@ -43,9 +42,6 @@ const numToDate = (dateNum: number) => {
     return new Date(date);
 };
 
-const dateEqualizer = (date: Date) =>
-    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-
 const nationalHolliday = (async () =>
     await (
         await getNationalHolliday({
@@ -61,16 +57,15 @@ const getWorkingDay = async (startDate: Date, workerNumber: number) => {
     const extraIterationNumber =
         Math.ceil(workerNumber / WORK_INFO.WORK_PER_DAY) * workerNumber;
 
-    //TODO: CORS 에러 해결 방법 찾기 - proxy server, 데이터 포털 등록 등...
-    // const nationalHollidayData = await nationalHolliday;
+    const nationalHollidayData = await nationalHolliday;
 
     const workDayList = getIterationArray(0, workerNumber + extraIterationNumber)
         .map((dayIndex) => addDayToString(startDate, dayIndex))
         .reduce<string[]>((accWorkDayList, currDate) => {
             const date = new Date(currDate);
 
-            // if (nationalHollidayData.includes(dateEqualizer(date)))
-            //     return accWorkDayList;
+            if (nationalHollidayData.includes(dateEqualizer(date)))
+                return accWorkDayList;
 
             if (!isHolliday(date)) return [...accWorkDayList, currDate];
 

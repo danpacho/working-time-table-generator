@@ -10,7 +10,17 @@ export default defineConfig({
                 target: "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
                 changeOrigin: true,
                 secure: false,
-                rewrite: (path) => path.replace(/^\/getRestDeInfo/, ""),
+                rewrite: (path) => path.replace(/^\/api\/getRestDeInfo/, ""),
+            },
+        },
+    },
+    preview: {
+        proxy: {
+            "/api/getRestDeInfo": {
+                target: "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
+                changeOrigin: true,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/api\/getRestDeInfo/, ""),
             },
         },
     },

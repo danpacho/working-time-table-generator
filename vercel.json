@@ -1,7 +1,7 @@
 {
     "redirects": [
         {
-            "source": "/getRestDeInfo",
+            "source": "/api/getRestDeInfo",
             "destination": "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"
         }
     ],
