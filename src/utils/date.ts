@@ -1,7 +1,6 @@
-import { API_PARAM_CONFIG, API_RESPONSE, API_URL } from "../constants/api";
+import { HOLLIDAY } from "../constants/holliday";
 import { WORK_INFO } from "../constants/workInfo";
 import { getIterationArray, shuffle } from "./array";
-import { axiosGET } from "./axios";
 
 const DAY = ["일", "월", "화", "수", "목", "금", "토"] as const;
 const HOLLIDAY_INDEX = [0, 6];
@@ -21,19 +20,6 @@ const addDayToString = (currentDate: Date, updateDayMount: number): string => {
 
 const isHolliday = (time: Date) => HOLLIDAY_INDEX.includes(time.getDay());
 
-const getNationalHolliday = async (
-    APIparams: Omit<API_PARAM_CONFIG, "ServiceKey">
-) => {
-    const { data } = await axiosGET<API_RESPONSE>({
-        url: API_URL,
-        params: {
-            ServiceKey: import.meta.env.VITE_API_KEY,
-            ...APIparams,
-        } as API_PARAM_CONFIG,
-    });
-    return data;
-};
-
 const numToDate = (dateNum: number) => {
     const date = `${String(dateNum).slice(0, 4)}-${String(dateNum).slice(
         4,
@@ -42,29 +28,17 @@ const numToDate = (dateNum: number) => {
     return new Date(date);
 };
 
-const nationalHolliday = (async () =>
-    await (
-        await getNationalHolliday({
-            _type: "json",
-            numOfRows: 30,
-            solYear: new Date().getFullYear(),
-        })
-    ).response.body.items.item.map(({ locdate }) =>
-        dateEqualizer(numToDate(locdate))
-    ))();
-
-const getWorkingDay = async (startDate: Date, workerNumber: number) => {
+const getWorkingDay = (startDate: Date, workerNumber: number) => {
     const extraIterationNumber =
         Math.ceil(workerNumber / WORK_INFO.WORK_PER_DAY) * workerNumber;
-
-    const nationalHollidayData = await nationalHolliday;
+    const currentYear = String(startDate.getFullYear()) as "2022" | "2023";
 
     const workDayList = getIterationArray(0, workerNumber + extraIterationNumber)
         .map((dayIndex) => addDayToString(startDate, dayIndex))
         .reduce<string[]>((accWorkDayList, currDate) => {
             const date = new Date(currDate);
 
-            if (nationalHollidayData.includes(dateEqualizer(date)))
+            if (HOLLIDAY[currentYear].includes(dateEqualizer(date)))
                 return accWorkDayList;
 
             if (!isHolliday(date)) return [...accWorkDayList, currDate];
@@ -94,15 +68,15 @@ export interface WorkInfoType<WorkerListType> {
     date: string;
     day: "일" | "월" | "화" | "수" | "목" | "금" | "토";
 }
-const getWorkInfo = async <WorkerListType>({
+const getWorkInfo = <WorkerListType>({
     startDate,
     workPerDay,
     workerList,
-}: GetWorkerInfoProps<WorkerListType>): Promise<WorkInfoType<WorkerListType>[]> => {
+}: GetWorkerInfoProps<WorkerListType>): WorkInfoType<WorkerListType>[] => {
     const shuffledWorker = shuffle(workerList);
     const shuffledWorkerLength = shuffledWorker.length;
 
-    const workingDay = await getWorkingDay(startDate, shuffledWorkerLength);
+    const workingDay = getWorkingDay(startDate, shuffledWorkerLength);
     const workInfo = getIterationArray(1, shuffledWorkerLength)
         .map((_, index) =>
             getIterationArray(workPerDay * index, workPerDay).map(
@@ -123,51 +97,43 @@ interface GetWorkerCycleInfoProps<WorkerListType>
     extends GetWorkerInfoProps<WorkerListType> {
     cycle: number;
 }
-const getWorkCycleInfo = async <WorkerListType>({
+const getWorkCycleInfo = <WorkerListType>({
     cycle,
     startDate,
     workPerDay,
     workerList,
 }: GetWorkerCycleInfoProps<WorkerListType>) => {
-    const cycleWorkInfo = await getIterationArray(0, cycle).reduce<
-        Promise<WorkInfoType<WorkerListType>[]>
-    >(
-        async (
-            accCycleWorkInfo,
-            _,
-            order
-        ): Promise<WorkInfoType<WorkerListType>[]> => {
-            const resolvedAccCycleWorkInfo = await accCycleWorkInfo;
-            if (order === 0) {
-                const firstCycleWorkInfo = await getWorkInfo({
-                    startDate,
-                    workPerDay,
-                    workerList,
-                });
-                return [...resolvedAccCycleWorkInfo, ...firstCycleWorkInfo];
-            }
-
-            const lastSavedWorkDate =
-                resolvedAccCycleWorkInfo[resolvedAccCycleWorkInfo.length - 1].date;
-            const nextWork = await getWorkInfo({
-                startDate: new Date(addDayToString(new Date(lastSavedWorkDate), 1)),
+    const cycleWorkInfo = getIterationArray(0, cycle).reduce<
+        WorkInfoType<WorkerListType>[]
+    >((accCycleWorkInfo, _, order): WorkInfoType<WorkerListType>[] => {
+        if (order === 0) {
+            const firstCycleWorkInfo = getWorkInfo({
+                startDate,
                 workPerDay,
                 workerList,
             });
+            return [...accCycleWorkInfo, ...firstCycleWorkInfo];
+        }
 
-            return [...resolvedAccCycleWorkInfo, ...nextWork];
-        },
-        Promise.resolve([])
-    );
+        const lastSavedWorkDate = accCycleWorkInfo[accCycleWorkInfo.length - 1].date;
+        const nextWork = getWorkInfo({
+            startDate: new Date(addDayToString(new Date(lastSavedWorkDate), 1)),
+            workPerDay,
+            workerList,
+        });
+
+        return [...accCycleWorkInfo, ...nextWork];
+    }, []);
 
     return cycleWorkInfo;
 };
 
 export {
+    numToDate,
+    dateEqualizer,
     getDay,
     isHolliday,
     getWorkInfo,
     getWorkCycleInfo,
     addDayToString,
-    getNationalHolliday,
 };

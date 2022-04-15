@@ -192,9 +192,9 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         variant="filled"
                         color="teal"
                         rightIcon={<Confetti size={18} />}
-                        onClick={async () => {
+                        onClick={() => {
                             setWorkInfoArray(
-                                await getWorkCycleInfo({
+                                getWorkCycleInfo({
                                     startDate: workStartDate!,
                                     workPerDay: WORK_INFO.WORK_PER_DAY,
                                     workerList: agentList,
