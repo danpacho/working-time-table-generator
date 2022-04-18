@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { HOLLIDAY } from "../constants/holliday";
 import { WORK_INFO } from "../constants/workInfo";
 import { getIterationArray, shuffle } from "./array";
@@ -8,35 +10,33 @@ type DAY_TYPE = typeof DAY[number];
 
 const getDay = (time: string): DAY_TYPE => DAY[new Date(time).getDay()];
 
-const dateEqualizer = (date: Date) =>
-    `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+const dateEqualizer = (date: dayjs.Dayjs) =>
+    `${date.get("year")}-${date.get("month") + 1}-${date.get("date")}`;
 
-const addDayToString = (currentDate: Date, updateDayMount: number): string => {
-    const addedDate = new Date(currentDate);
-    addedDate.setDate(currentDate.getDate() + updateDayMount);
+const addDayToString = (currentDate: dayjs.Dayjs, updateDayMount: number) =>
+    currentDate.add(updateDayMount, "day");
 
-    return dateEqualizer(addedDate);
-};
-
-const isHolliday = (time: Date) => HOLLIDAY_INDEX.includes(time.getDay());
+const isHolliday = (time: dayjs.Dayjs) => HOLLIDAY_INDEX.includes(time.day());
 
 const numToDate = (dateNum: number) => {
     const date = `${String(dateNum).slice(0, 4)}-${String(dateNum).slice(
         4,
         6
     )}-${String(dateNum).slice(6, 8)}`;
-    return new Date(date);
+    return dayjs(date);
 };
 
-const getWorkingDay = (startDate: Date, workerNumber: number) => {
+const getWorkingDay = (
+    startDate: dayjs.Dayjs,
+    workerNumber: number
+): dayjs.Dayjs[] => {
     const extraIterationNumber =
         Math.ceil(workerNumber / WORK_INFO.WORK_PER_DAY) * workerNumber;
-    const currentYear = String(startDate.getFullYear()) as "2022" | "2023";
-
+    const currentYear = String(new Date().getFullYear()) as "2022" | "2023";
     const workDayList = getIterationArray(0, workerNumber + extraIterationNumber)
         .map((dayIndex) => addDayToString(startDate, dayIndex))
-        .reduce<string[]>((accWorkDayList, currDate) => {
-            const date = new Date(currDate);
+        .reduce<dayjs.Dayjs[]>((accWorkDayList, currDate) => {
+            const date = dayjs(currDate);
 
             if (HOLLIDAY[currentYear].includes(dateEqualizer(date)))
                 return accWorkDayList;
@@ -45,7 +45,7 @@ const getWorkingDay = (startDate: Date, workerNumber: number) => {
 
             if (accWorkDayList.includes(currDate)) {
                 const test = addDayToString(date, 1);
-                const testDate = new Date(test);
+                const testDate = dayjs(test);
                 const validatedDate = isHolliday(testDate)
                     ? addDayToString(testDate, 1)
                     : test;
@@ -60,13 +60,15 @@ const getWorkingDay = (startDate: Date, workerNumber: number) => {
 
 interface GetWorkerInfoProps<WorkerListType> {
     workerList: WorkerListType[];
-    startDate: Date;
+    startDate: dayjs.Dayjs;
     workPerDay: number;
 }
 export interface WorkInfoType<WorkerListType> {
     workSheet: WorkerListType[];
+    dayJsObject: dayjs.Dayjs;
     date: string;
     day: "일" | "월" | "화" | "수" | "목" | "금" | "토";
+    isCycleStart: boolean;
 }
 const getWorkInfo = <WorkerListType>({
     startDate,
@@ -86,8 +88,10 @@ const getWorkInfo = <WorkerListType>({
         .map((workSheet, dayIndex) => {
             return {
                 workSheet,
-                date: workingDay[dayIndex],
-                day: getDay(workingDay[dayIndex]),
+                dayJsObject: workingDay[dayIndex],
+                day: DAY[workingDay[dayIndex].day()],
+                date: workingDay[dayIndex].format("YYYY년 MM월 DD일"),
+                isCycleStart: dayIndex === 0,
             };
         });
     return workInfo;
@@ -115,9 +119,10 @@ const getWorkCycleInfo = <WorkerListType>({
             return [...accCycleWorkInfo, ...firstCycleWorkInfo];
         }
 
-        const lastSavedWorkDate = accCycleWorkInfo[accCycleWorkInfo.length - 1].date;
+        const lastSavedWorkDate =
+            accCycleWorkInfo[accCycleWorkInfo.length - 1].dayJsObject;
         const nextWork = getWorkInfo({
-            startDate: new Date(addDayToString(new Date(lastSavedWorkDate), 1)),
+            startDate: addDayToString(lastSavedWorkDate, 1),
             workPerDay,
             workerList,
         });
