@@ -3,7 +3,7 @@ import media from "../../../styles/utils/media";
 
 import { Calendar, UserSearch } from "tabler-icons-react";
 
-import { Tabs } from "@mantine/core";
+import { Tabs, Text } from "@mantine/core";
 
 import { Box } from "../../atoms/container";
 
@@ -24,20 +24,43 @@ export interface AgentListProp {
 function MainTabPage({ agentList }: AgentListProp) {
     return (
         <MainContainer
-            position="fixed"
-            top={32}
+            display="flex"
+            width="100%"
+            minWidth="100vw"
             height="100%"
             minHeight="100vh"
-            display="flex"
             flexDirection="row"
             align="flex-start"
             justify="center"
         >
-            <Tabs variant="pills">
-                <Tabs.Tab label="근무일지" icon={<Calendar size={16} />}>
+            <Tabs
+                variant="pills"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
+                }}
+            >
+                <Tabs.Tab
+                    label={
+                        <Text size="sm" variant="text" weight="bold">
+                            근무 일지
+                        </Text>
+                    }
+                    icon={<Calendar size={18} />}
+                >
                     <WorkInfoEditor agentList={agentList} />
                 </Tabs.Tab>
-                <Tabs.Tab label="요원 목록" icon={<UserSearch size={16} />}>
+                <Tabs.Tab
+                    label={
+                        <Text size="sm" variant="text" weight="bold">
+                            요원 목록
+                        </Text>
+                    }
+                    icon={<UserSearch size={18} />}
+                >
                     <AgentList agentList={agentList} />
                 </Tabs.Tab>
             </Tabs>
