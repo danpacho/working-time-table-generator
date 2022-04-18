@@ -18,13 +18,13 @@ function List({ listElement }: ListProps) {
             pr="1rem"
             pl=".5rem"
             border={{
-                color: "gray1",
+                color: "gray3",
                 width: 1.25,
                 hover_color: "white",
             }}
             background="white"
-            hover_background="gray1"
-            gap={"1rem"}
+            hover_background="teal2"
+            gap=".5rem"
         >
             {typeof listElement === "string" && <Text>{listElement}</Text>}
             {typeof listElement !== "string" && listElement}
