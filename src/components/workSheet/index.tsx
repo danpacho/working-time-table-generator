@@ -19,6 +19,8 @@ import { WorkInfoType } from "../../utils/date";
 
 import { Box } from "../atoms/container";
 import { DAY_WORK_INFO } from "../../constants/dayWorkInfo";
+import { useLocalStorageValue } from "@mantine/hooks";
+import { AGENT_LIST_KEY } from "../../constants/localStorageKey";
 
 interface WorkSheetProps {
     setWorkInfoArray: (
@@ -28,7 +30,6 @@ interface WorkSheetProps {
     ) => void;
     workInfoArray: WorkInfoType<string>[];
 }
-const CONTENT_PER_PAGE = 5;
 
 interface ExchangeInfo extends Pick<WorkInfoType<string>, "date" | "day"> {
     workName: string;
@@ -50,6 +51,7 @@ const getUpdatedWorkInfo = (
     const dateArray = workInfoArray.map(({ date }) => date);
     const exchangeStartIndex = dateArray.indexOf(exchangeWorkInfo.start.date);
     const exchangeEndIndex = dateArray.indexOf(exchangeWorkInfo.end.date);
+
     const modified = [...workInfoArray];
     modified[exchangeStartIndex].workSheet[exchangeWorkInfo.start.workIndex] =
         exchangeWorkInfo.end.workName;
@@ -72,15 +74,15 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
     const [activePage, setPage] = useState(1);
     const [exchangeWorkInfo, setExchangeWorkInfo] =
         useState<ExchangeWorkInfo | null>(null);
-
+    const [worker, _] = useLocalStorageValue({
+        key: AGENT_LIST_KEY,
+    });
+    const cycleNumber = worker.length;
     return (
         <>
-            <SimpleGrid cols={5} spacing="md">
+            <SimpleGrid cols={cycleNumber} spacing="md">
                 {workInfoArray
-                    ?.slice(
-                        (activePage - 1) * CONTENT_PER_PAGE,
-                        activePage * CONTENT_PER_PAGE
-                    )
+                    ?.slice((activePage - 1) * cycleNumber, activePage * cycleNumber)
                     ?.map((workInfo) => (
                         <DayWorkSheet
                             {...workInfo}
@@ -91,17 +93,20 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                     ))}
             </SimpleGrid>
 
-            <Pagination
-                total={parseInt(String(workInfoArray.length / CONTENT_PER_PAGE)) + 1}
-                page={activePage}
-                onChange={setPage}
-                color="teal"
-                size="sm"
-                radius="sm"
-                withEdges
-                boundaries={3}
-                initialPage={1}
-            />
+            {workInfoArray.length !== 0 && (
+                <Pagination
+                    total={workInfoArray.length / cycleNumber}
+                    page={activePage}
+                    onChange={setPage}
+                    color="teal"
+                    size="sm"
+                    radius="sm"
+                    withEdges
+                    boundaries={3}
+                    initialPage={1}
+                />
+            )}
+
             {exchangeWorkInfo?.end && exchangeWorkInfo.start && (
                 <ExchangeWorkContainer
                     position="fixed"
@@ -112,7 +117,7 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                     justify="center"
                     gap=".75rem"
                     background="white"
-                    shadow="shadowMd"
+                    shadow="shadowXxlg"
                     pAll={12}
                 >
                     <Box
@@ -127,18 +132,36 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                             flexDirection="column"
                             align="center"
                             justify="center"
-                            gap=".25rem"
+                            gap="1rem"
                         >
-                            <Text size="xs" weight="bold">
+                            <Text size="sm" weight="bold">
                                 {exchangeWorkInfo.start.workName}
                             </Text>
-                            <Badge size="xs" variant="outline" color="red">
-                                {exchangeWorkInfo.start.date}{" "}
+                            <Badge size="xs" variant="outline" color="teal">
+                                {exchangeWorkInfo.start.date}
+                                {", "}
                                 {exchangeWorkInfo.start.day}
                             </Badge>
+                            <Button
+                                size="xs"
+                                variant="filled"
+                                color="teal"
+                                onClick={() => {
+                                    const updatedWorkInfoArray = getUpdatedWorkInfo(
+                                        workInfoArray,
+                                        exchangeWorkInfo!
+                                    );
+                                    if (updatedWorkInfoArray !== null) {
+                                        setWorkInfoArray(updatedWorkInfoArray);
+                                        setExchangeWorkInfo(null);
+                                    }
+                                }}
+                            >
+                                업무 교환
+                            </Button>
                         </Box>
-                        <ActionIcon variant="light" color="gray">
-                            <Exchange size={14} />
+                        <ActionIcon variant="hover" color="gray">
+                            <Exchange size={16} />
                         </ActionIcon>
 
                         <Box
@@ -146,52 +169,26 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                             flexDirection="column"
                             align="center"
                             justify="center"
-                            gap=".25rem"
+                            gap="1rem"
                         >
-                            <Text size="xs" weight="bold">
+                            <Text size="sm" weight="bold">
                                 {exchangeWorkInfo.end.workName}
                             </Text>
-                            <Badge size="xs" variant="outline" color="indigo">
-                                {exchangeWorkInfo.end.date}{" "}
+                            <Badge size="xs" variant="outline" color="red">
+                                {exchangeWorkInfo.end.date}
+                                {", "}
                                 {exchangeWorkInfo.end.day}
                             </Badge>
+                            <Button
+                                size="xs"
+                                variant="filled"
+                                color="red"
+                                rightIcon={<Trash size={14} />}
+                                onClick={() => setExchangeWorkInfo(null)}
+                            >
+                                취소
+                            </Button>
                         </Box>
-                    </Box>
-
-                    <Box
-                        display="flex"
-                        flexDirection="row"
-                        align="center"
-                        justify="center"
-                        gap="1.5rem"
-                    >
-                        <Button
-                            size="xs"
-                            variant="filled"
-                            color="teal"
-                            rightIcon={<Exchange size={14} />}
-                            onClick={() => {
-                                const updatedWorkInfoArray = getUpdatedWorkInfo(
-                                    workInfoArray,
-                                    exchangeWorkInfo!
-                                );
-                                if (updatedWorkInfoArray !== null) {
-                                    setWorkInfoArray(updatedWorkInfoArray);
-                                    setExchangeWorkInfo(null);
-                                }
-                            }}
-                        >
-                            업무 교환
-                        </Button>
-                        <Button
-                            size="xs"
-                            variant="filled"
-                            color="red"
-                            rightIcon={<Trash size={14} />}
-                            onClick={() => setExchangeWorkInfo(null)}
-                        >
-                            취소
-                        </Button>
                     </Box>
                 </ExchangeWorkContainer>
             )}
@@ -246,6 +243,7 @@ const DayWorkSheet = ({
     workSheet,
     setExchangeWorkInfo,
     exchangeWorkInfo,
+    isCycleStart,
 }: DayWorkSheetProps) => {
     return (
         <Box
@@ -257,20 +255,39 @@ const DayWorkSheet = ({
         >
             <Box
                 minWidth="max-content"
-                background="gray1"
+                background="white"
                 color="gray9"
-                fontWeight="600"
-                borderRadius="bxxsm"
+                fontWeight="700"
+                borderRadius="bsm"
                 display="flex"
+                flexDirection="column"
                 align="center"
                 justify="center"
-                fontSize="sm"
+                gap=".15rem"
+                border={{
+                    color: isCycleStart ? "purple5" : "gray2",
+                    width: isCycleStart ? "1.5px" : "1.25px",
+                    hover_color: isCycleStart ? "purple7" : "gray4",
+                }}
                 pt={4}
-                pb={4}
+                pb={8}
                 pr={6}
                 pl={6}
             >
-                {date} {day}요일
+                <Text
+                    weight="bold"
+                    color={isCycleStart ? "violet" : "gray"}
+                    size="md"
+                >
+                    {day}요일
+                </Text>
+                <Text
+                    weight={isCycleStart ? "bold" : "lighter"}
+                    color={isCycleStart ? "violet" : "gray"}
+                    size="sm"
+                >
+                    {date}
+                </Text>
             </Box>
 
             {workSheet.map((workAgent, order) => (
@@ -280,7 +297,7 @@ const DayWorkSheet = ({
                             workName: workAgent,
                             workIndex: DAY_WORK_INFO[order].workIndex,
                             workTime: DAY_WORK_INFO[order].workHour,
-                            date,
+                            date: date,
                             day,
                         });
                         setExchangeWorkInfo(info);
@@ -293,7 +310,7 @@ const DayWorkSheet = ({
                     width="100%"
                     pb={8}
                     pt={8}
-                    borderRadius="bmd"
+                    borderRadius="bsm"
                     shadow="shadowXxsm"
                     hover_shadow="shadowLg"
                     background={
@@ -309,10 +326,11 @@ const DayWorkSheet = ({
                             : "white"
                     }
                     border={{
-                        width: 1.25,
-                        color: "gray1",
+                        width: 0.5,
+                        color: "gray2",
                         hover_color: `${DAY_WORK_INFO[order].borderColor}`,
                     }}
+                    cursorPointer
                     key={`${DAY_WORK_INFO[order].workIndex}-${DAY_WORK_INFO[order].workHour}-${order}`}
                 >
                     <Text size="sm" weight="bold">
@@ -328,20 +346,20 @@ const DayWorkSheet = ({
                     >
                         <Badge
                             size="sm"
-                            variant="dot"
-                            color={DAY_WORK_INFO[order].color}
-                        >
-                            <Text weight="bold" size="xs">
-                                {DAY_WORK_INFO[order].time}
-                            </Text>
-                        </Badge>
-                        <Badge
-                            size="sm"
                             variant="light"
                             color={DAY_WORK_INFO[order].color}
                         >
                             <Text weight="bold" size="xs">
                                 {DAY_WORK_INFO[order].workHour}
+                            </Text>
+                        </Badge>
+                        <Badge
+                            size="sm"
+                            variant="dot"
+                            color={DAY_WORK_INFO[order].color}
+                        >
+                            <Text weight="bold" size="xs">
+                                {DAY_WORK_INFO[order].time}
                             </Text>
                         </Badge>
                     </Box>
