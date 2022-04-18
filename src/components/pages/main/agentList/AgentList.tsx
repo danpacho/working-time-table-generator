@@ -12,27 +12,38 @@ function AgentList({ agentList }: AgentListProp) {
             display="flex"
             flexDirection="row"
             flexWrap="wrap"
+            width="100%"
             align="center"
-            justify="flex-start"
+            justify="center"
             gap="1rem"
-            width="85%"
             mt={18}
         >
-            {sortedAgentList.map((agent) => (
-                <List
-                    listElement={
-                        <>
-                            <Avatar color="teal" radius="sm">
-                                <User size={20} />
-                            </Avatar>
-                            <Text weight="bolder" size="sm">
-                                {agent}
-                            </Text>
-                        </>
-                    }
-                    key={agent}
-                />
-            ))}
+            <Box
+                display="flex"
+                flexDirection="row"
+                flexWrap="wrap"
+                width="65%"
+                align="center"
+                justify="center"
+                gap="2rem"
+                mt={18}
+            >
+                {sortedAgentList.map((agent) => (
+                    <List
+                        listElement={
+                            <>
+                                <Avatar color="teal" radius="md">
+                                    <User size={20} />
+                                </Avatar>
+                                <Text weight="bolder" size="sm">
+                                    {agent}
+                                </Text>
+                            </>
+                        }
+                        key={agent}
+                    />
+                ))}
+            </Box>
         </Box>
     );
 }
