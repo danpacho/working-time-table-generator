@@ -36,7 +36,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
         key: WORK_INFO_ARRAY_KEY,
         defaultValue: [],
     });
-    const workInfoArrayLength = workInfoArray.length;
+    const workInfoArrayLength = workInfoArray?.length;
 
     const [openCalendar, setOpenCalander] = useState(false);
     const [openeReset, setOpenReset] = useState(false);

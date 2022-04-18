@@ -77,7 +77,7 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
     const [worker, _] = useLocalStorageValue({
         key: AGENT_LIST_KEY,
     });
-    const cycleNumber = worker.length;
+    const cycleNumber = worker?.length;
     return (
         <>
             <SimpleGrid cols={cycleNumber} spacing="md">
