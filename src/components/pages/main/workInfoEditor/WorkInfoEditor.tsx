@@ -20,13 +20,14 @@ import {
 import WorkSheet from "../../../workSheet";
 import { WORK_INFO } from "../../../../constants/workInfo";
 import { WORK_INFO_ARRAY_KEY } from "../../../../constants/localStorageKey";
+import dayjs from "dayjs";
 
 interface SlectDateProps {
     agentList: string[];
 }
 
-const validateDate = (date: Date) =>
-    isHolliday(date) ? new Date(addDayToString(date, 2)) : date;
+const validateDate = (date: dayjs.Dayjs) =>
+    isHolliday(date) ? dayjs(addDayToString(date, 2)) : date;
 
 function WorkInfoEditor({ agentList }: SlectDateProps) {
     const [workInfoArray, setWorkInfoArray] = useLocalStorage<
@@ -35,32 +36,33 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
         key: WORK_INFO_ARRAY_KEY,
         defaultValue: [],
     });
+    const workInfoArrayLength = workInfoArray.length;
 
     const [openCalendar, setOpenCalander] = useState(false);
     const [openeReset, setOpenReset] = useState(false);
     const [cycle, setCycle] = useState(1);
 
-    const [workStartDate, setWorkStartDate] = useState<Date | null>(
-        workInfoArray.length !== 0
-            ? new Date(
+    const [workStartDate, setWorkStartDate] = useState<dayjs.Dayjs | null>(
+        workInfoArrayLength !== 0
+            ? dayjs(
                   addDayToString(
-                      new Date(workInfoArray[workInfoArray.length - 1]?.date),
+                      dayjs(workInfoArray[workInfoArrayLength - 1]?.dayJsObject),
                       1
                   )
               )
-            : new Date()
+            : dayjs()
     );
 
     useEffect(() => {
         setWorkStartDate(
-            workInfoArray.length !== 0
-                ? new Date(
+            workInfoArrayLength !== 0
+                ? dayjs(
                       addDayToString(
-                          new Date(workInfoArray[workInfoArray.length - 1]?.date),
+                          dayjs(workInfoArray[workInfoArrayLength - 1]?.dayJsObject),
                           1
                       )
                   )
-                : new Date()
+                : dayjs()
         );
     }, [workInfoArray]);
 
@@ -81,9 +83,11 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         onClick={() => setOpenCalander(true)}
                         rightIcon={<Check color="teal" size={14} />}
                     >
-                        새로운 업무 일정 만들기
+                        {workInfoArrayLength !== 0
+                            ? "싸이클 마지막 날짜 다음날 부터 일정 만들기"
+                            : "새로운 업무 일정 만들기"}
                     </Button>
-                    {workInfoArray.length !== 0 && (
+                    {workInfoArrayLength !== 0 && (
                         <Popover
                             opened={openeReset}
                             onClose={() => setOpenReset(false)}
@@ -98,7 +102,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                                     업무 일정 파기하기
                                 </Button>
                             }
-                            width={240}
+                            width={210}
                             position="bottom"
                             withArrow
                         >
@@ -110,7 +114,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                                 width="100%"
                                 gap="1rem"
                             >
-                                <Text color="red" weight="bolder" size="sm">
+                                <Text color="red" weight="bolder" size="xs">
                                     삭제된 일정은 복구가 불가능 합니다
                                 </Text>
                                 <Button
@@ -161,9 +165,9 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         placeholder="클릭해서 날짜 선택"
                         label="근무 시작일"
                         locale="ko"
-                        value={workStartDate}
+                        value={workStartDate && new Date(workStartDate?.format())}
                         onChange={(date) => {
-                            setWorkStartDate(validateDate(date!));
+                            setWorkStartDate(validateDate(dayjs(date)!));
                         }}
                         firstDayOfWeek="sunday"
                         dayStyle={(date, modifiers) => {
