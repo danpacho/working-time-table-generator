@@ -7,8 +7,9 @@ interface UserInputProps {
     rightSection?: React.ReactNode;
     rightSectionWidth?: number;
     setInput(input: string): void;
+    input: string;
     initialFocus?: boolean;
-    submitFunction?: () => void;
+    submitHandler: () => void;
 }
 
 function UserInput({
@@ -17,24 +18,28 @@ function UserInput({
     rightSection,
     rightSectionWidth,
     setInput,
-    submitFunction,
+    input,
     initialFocus = false,
+    submitHandler,
 }: UserInputProps) {
     const ref = useRef<HTMLInputElement>(null);
     useEffect(() => {
         initialFocus && ref.current?.focus();
     }, []);
 
+    const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setInput(e.target.value);
+    };
+
     return (
         <form
             onSubmit={(e) => {
                 e.preventDefault();
-                typeof ref.current?.value === "string" &&
-                    setInput(ref.current?.value);
-                submitFunction && submitFunction();
+                submitHandler();
             }}
         >
             <Input
+                value={input}
                 icon={icon}
                 placeholder={placeholder}
                 rightSectionWidth={rightSectionWidth ?? 75}
@@ -43,6 +48,7 @@ function UserInput({
                 ref={ref}
                 variant="default"
                 size="md"
+                onChange={onChange}
             />
         </form>
     );

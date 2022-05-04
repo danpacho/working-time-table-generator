@@ -1,8 +1,11 @@
+import { useCallback, useState } from "react";
 import { Button, Badge, Text, Tooltip } from "@mantine/core";
-import { useEffect, useState } from "react";
+
 import { Trash, UserCircle } from "tabler-icons-react";
+
 import { Box } from "../../atoms/container/index";
 import UserInput from "../../atoms/input";
+
 import { CRUDAgentProps } from ".";
 
 const updateAgentList = (agentList: string[], agentName: string) => {
@@ -16,10 +19,10 @@ const removeAgentList = (agentList: string[], agentName: string) =>
 function UpdateAgentList({ agentList, setAgentList }: CRUDAgentProps) {
     const [agentName, setAgentName] = useState("");
 
-    useEffect(() => {
+    const agentSubmitHandler = () => {
         setAgentList((agentList) => updateAgentList(agentList, agentName));
         setAgentName("");
-    }, [agentName]);
+    };
 
     return (
         <Box
@@ -40,13 +43,15 @@ function UpdateAgentList({ agentList, setAgentList }: CRUDAgentProps) {
             <Box position="sticky" top={0} zIndex="zContnet">
                 <UserInput
                     icon={<UserCircle size={24} strokeWidth={1.25} />}
-                    placeholder="요원"
+                    placeholder="Enter키를 눌러 추가"
                     rightSection={
                         <Badge color="blue" variant="outline">
-                            추가
+                            요원
                         </Badge>
                     }
                     setInput={setAgentName}
+                    input={agentName}
+                    submitHandler={agentSubmitHandler}
                     initialFocus
                     rightSectionWidth={65}
                 />
