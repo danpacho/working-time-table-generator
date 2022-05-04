@@ -322,13 +322,13 @@ const DayWorkSheet = ({
                             exchangeWorkInfo.start?.workName === workAgent &&
                             exchangeWorkInfo.start.date === date &&
                             exchangeWorkInfo.start.workIndex === order)
-                            ? `${DAY_WORK_INFO[order].borderColor}`
+                            ? `${DAY_WORK_INFO[order]?.borderColor}`
                             : "white"
                     }
                     border={{
                         width: 0.5,
                         color: "gray2",
-                        hover_color: `${DAY_WORK_INFO[order].borderColor}`,
+                        hover_color: `${DAY_WORK_INFO[order]?.borderColor}`,
                     }}
                     cursorPointer
                     key={`${DAY_WORK_INFO[order].workIndex}-${DAY_WORK_INFO[order].workHour}-${order}`}
