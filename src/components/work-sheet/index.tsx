@@ -81,10 +81,14 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
 
     const [isValidate, setIsValidate] = useState(false);
     const cycleNumber = worker?.length;
+
     useEffect(() => {
-        if (WORK_INFO.WORK_PER_DAY !== cycleNumber) {
-            setWorkInfoArray([]);
-            setExchangeWorkInfo(null);
+        const isDataExsists = workInfoArray?.length >= 1;
+        if (isDataExsists) {
+            if (workInfoArray[0].workSheet.length !== WORK_INFO.WORK_PER_DAY) {
+                setWorkInfoArray([]);
+                setExchangeWorkInfo(null);
+            }
         } else {
             setIsValidate(true);
         }
