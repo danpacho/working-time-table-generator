@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 import { HOLLIDAY } from "@constants/holliday";
 import { WORK_INFO } from "@constants/workInfo";
-import { getIterationArray, shuffle } from "./array";
+import { getIterationArray, shift, shuffle } from "./array";
 
 const DAY = ["일", "월", "화", "수", "목", "금", "토"] as const;
 const HOLLIDAY_INDEX = [0, 6];
@@ -78,22 +78,33 @@ const getWorkInfo = <WorkerListType>({
     const shuffledWorker = shuffle(workerList);
     const shuffledWorkerLength = shuffledWorker.length;
 
-    const workingDay = getWorkingDay(startDate, shuffledWorkerLength);
-    const workInfo = getIterationArray(1, shuffledWorkerLength)
-        .map((_, index) =>
-            getIterationArray(workPerDay * index, workPerDay).map(
-                (index) => shuffledWorker[index % shuffledWorkerLength]
-            )
-        )
-        .map((workSheet, dayIndex) => {
-            return {
-                workSheet,
-                dayJsObject: workingDay[dayIndex],
-                day: DAY[workingDay[dayIndex].day()],
-                date: workingDay[dayIndex].format("YYYY년 MM월 DD일"),
-                isCycleStart: dayIndex === 0,
-            };
-        });
+    const workingDayArray = getWorkingDay(startDate, shuffledWorkerLength);
+
+    const isWorkDuplicated = shuffledWorkerLength % workPerDay === 0;
+
+    const workSheetArray = isWorkDuplicated
+        ? getIterationArray(1, shuffledWorkerLength).map((_, index) =>
+              shift(
+                  getIterationArray(workPerDay * index, workPerDay).map(
+                      (index) => shuffledWorker[index % shuffledWorkerLength]
+                  ),
+                  index * 2 + 1
+              )
+          )
+        : getIterationArray(1, shuffledWorkerLength).map((_, index) =>
+              getIterationArray(workPerDay * index, workPerDay).map(
+                  (index) => shuffledWorker[index % shuffledWorkerLength]
+              )
+          );
+    const workInfo = workSheetArray.map((workSheet, dayIndex) => {
+        return {
+            workSheet,
+            dayJsObject: workingDayArray[dayIndex],
+            day: DAY[workingDayArray[dayIndex].day()],
+            date: workingDayArray[dayIndex].format("YYYY년 MM월 DD일"),
+            isCycleStart: dayIndex === 0,
+        };
+    });
     return workInfo;
 };
 
