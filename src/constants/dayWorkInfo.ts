@@ -29,7 +29,7 @@ const DAY_WORK_INFO: {
         time: "10:45 ~ 12:30",
         workHour: "1시간 45분",
         color: "indigo",
-        borderColor: "blue5",
+        borderColor: "blue4",
         workIndex: 2,
         workType: "access-control",
     },
