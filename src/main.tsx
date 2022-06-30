@@ -2,15 +2,12 @@ import "./styles/reset.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
 
-import { Main } from "./components/atoms/layout";
+import App from "./App";
 
 ReactDOM.render(
     <React.StrictMode>
-        <Main>
-            <App />
-        </Main>
+        <App />
     </React.StrictMode>,
     document.getElementById("root")
 );

@@ -1,9 +1,22 @@
+import styled from "styled-components";
 import { useLocalStorage } from "@mantine/hooks";
 
-import { AGENT_LIST_KEY } from "./constants/localStorageKey";
+import { AGENT_LIST_KEY } from "../constants/localStorageKey";
 
-import AgentPage from "./components/pages/agent";
-import MainTabPage from "./components/pages/main";
+import AgentListModalPage from "./pages/agent-update";
+import TabPage from "./pages/tabs";
+
+const MainContainer = styled.main`
+    min-width: 100vw;
+    width: 100%;
+
+    min-height: 100vh;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
 
 function App() {
     const [agentList, setAgentList] = useLocalStorage<string[]>({
@@ -12,10 +25,10 @@ function App() {
     });
 
     return (
-        <>
-            <MainTabPage agentList={agentList} />
-            <AgentPage agentList={agentList} setAgentList={setAgentList} />
-        </>
+        <MainContainer>
+            <TabPage agentList={agentList} />
+            <AgentListModalPage agentList={agentList} setAgentList={setAgentList} />
+        </MainContainer>
     );
 }
 
