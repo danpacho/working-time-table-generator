@@ -17,4 +17,14 @@ const shuffle = <T>(array: T[]) => {
     return shuffle;
 };
 
-export { getIterationArray, getNumberBetweenMinMax, shuffle };
+const shift = <T>(array: T[], shifMount: number) => {
+    const arrayLength = array.length;
+    if (shifMount <= 0) {
+        throw Error(`shifted mount ${shifMount} is not valid! Min mount is 1`);
+    }
+    const shiftedBefore = array.slice(arrayLength - shifMount, arrayLength);
+    const shiftedAfter = array.slice(0, arrayLength - shifMount);
+    return [...shiftedBefore, ...shiftedAfter];
+};
+
+export { getIterationArray, getNumberBetweenMinMax, shuffle, shift };
