@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import media from "../../styles/utils/media";
-import animation from "../../styles/utils/animation";
+import media from "../../../styles/utils/media";
+import animation from "../../../styles/utils/animation";
 
 import { Exchange, Trash } from "tabler-icons-react";
 
@@ -15,21 +15,12 @@ import {
     Text,
 } from "@mantine/core";
 
-import { WorkInfoType } from "../../utils/date";
+import { WorkInfoType } from "../../core/work-gen";
 
-import { Box } from "../atoms/container";
-import { DAY_WORK_INFO } from "../../constants/dayWorkInfo";
+import { Box } from "../atoms";
+import { DAY_WORK_INFO } from "../../../constants/dayWorkInfo";
 import { useLocalStorageValue } from "@mantine/hooks";
-import { AGENT_LIST_KEY } from "../../constants/localStorageKey";
-
-interface WorkSheetProps {
-    setWorkInfoArray: (
-        val:
-            | WorkInfoType<string>[]
-            | ((prevState: WorkInfoType<string>[]) => WorkInfoType<string>[])
-    ) => void;
-    workInfoArray: WorkInfoType<string>[];
-}
+import { AGENT_LIST_KEY } from "../../../constants/localStorageKey";
 
 interface ExchangeInfo extends Pick<WorkInfoType<string>, "date" | "day"> {
     workName: string;
@@ -52,13 +43,12 @@ const getUpdatedWorkInfo = (
     const exchangeStartIndex = dateArray.indexOf(exchangeWorkInfo.start.date);
     const exchangeEndIndex = dateArray.indexOf(exchangeWorkInfo.end.date);
 
-    const modified = [...workInfoArray];
-    modified[exchangeStartIndex].workSheet[exchangeWorkInfo.start.workIndex] =
+    workInfoArray[exchangeStartIndex].workSheet[exchangeWorkInfo.start.workIndex] =
         exchangeWorkInfo.end.workName;
-    modified[exchangeEndIndex].workSheet[exchangeWorkInfo.end.workIndex] =
+    workInfoArray[exchangeEndIndex].workSheet[exchangeWorkInfo.end.workIndex] =
         exchangeWorkInfo.start.workName;
 
-    return modified;
+    return workInfoArray;
 };
 
 const ExchangeWorkContainer = styled(Box)`
@@ -70,7 +60,17 @@ const ExchangeWorkContainer = styled(Box)`
     animation: ${animation.popInFromBottom} 0.5s
         cubic-bezier(0.175, 0.885, 0.32, 1.275);
 `;
+
+interface WorkSheetProps {
+    setWorkInfoArray: (
+        val:
+            | WorkInfoType<string>[]
+            | ((prevState: WorkInfoType<string>[]) => WorkInfoType<string>[])
+    ) => void;
+    workInfoArray: WorkInfoType<string>[];
+}
 function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
+    console.log(workInfoArray);
     const [activePage, setPage] = useState(1);
     const [exchangeWorkInfo, setExchangeWorkInfo] =
         useState<ExchangeWorkInfo | null>(null);
