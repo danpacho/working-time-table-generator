@@ -4,7 +4,7 @@ import animation from "@styles/utils/animation";
 
 import { Exchange, Trash } from "tabler-icons-react";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     ActionIcon,
@@ -59,8 +59,7 @@ const ExchangeWorkContainer = styled(Box)`
         right: 2rem;
     }
 
-    animation: ${animation.popInFromBottom} 0.5s
-        cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: ${animation.fadeIn} 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 `;
 
 interface WorkSheetProps {
@@ -260,24 +259,6 @@ interface DayWorkSheetProps extends WorkInfoType<string> {
     exchangeWorkInfo: ExchangeWorkInfo | null;
 }
 
-/*
-WORK_INFO	[
-    {"workSheet":["고웅빈","이용희","황성인","주형우"],
-    "dayJsObject":"2022-07-07T15:00:00.000Z",
-    "day":"금",
-    "date":"2022년 07월 08일",
-    "isCycleStart":true
-},{
-    "workSheet":["장준성","고웅빈","이용희","황성인"],
-    "dayJsObject":"2022-07-10T15:00:00.000Z",
-    "day":"월",
-    "date":"2022년 07월 11일",
-    "isCycleStart":false},{
-        "workSheet":["주형우","장준성","고웅빈","이용희"],
-        "dayJsObject":"2022-07-11T15:00:00.000Z",
-        "day":"화","date":"2022년 07월 12일",
-        "isCycleStart":false},{"workSheet":["황성인","주형우","장준성","고웅빈"],"dayJsObject":"2022-07-12T15:00:00.000Z","day":"수","date":"2022년 07월 13일","isCycleStart":false},{"workSheet":["이용희","황성인","주형우","장준성"],"dayJsObject":"2022-07-13T15:00:00.000Z","day":"목","date":"2022년 07월 14일","isCycleStart":false}]
- */
 const DayWorkSheet = ({
     date,
     day,
@@ -326,81 +307,81 @@ const DayWorkSheet = ({
             </Text>
         </Box>
 
-        {workSheet.map((workAgent, order) => (
-            <WorkBox
-                onClick={() => {
-                    const info = getExchangeWorkInfo(exchangeWorkInfo, {
-                        workName: workAgent,
-                        workIndex: DAY_WORK_INFO[order].workIndex,
-                        workTime: DAY_WORK_INFO[order].workHour,
-                        date: date,
-                        day,
-                    });
-                    setExchangeWorkInfo(info);
-                }}
-                display="flex"
-                align="center"
-                justify="center"
-                flexDirection="column"
-                gap=".5rem"
-                width="100%"
-                pb={8}
-                pt={8}
-                borderRadius="bsm"
-                shadow="shadowXxsm"
-                hover_shadow="shadowLg"
-                background={
-                    (exchangeWorkInfo &&
-                        exchangeWorkInfo.end?.workName === workAgent &&
-                        exchangeWorkInfo.end.date === date &&
-                        exchangeWorkInfo.end.workIndex === order) ||
-                    (exchangeWorkInfo &&
-                        exchangeWorkInfo.start?.workName === workAgent &&
-                        exchangeWorkInfo.start.date === date &&
-                        exchangeWorkInfo.start.workIndex === order)
-                        ? `${DAY_WORK_INFO[order]?.borderColor}`
-                        : "white"
-                }
-                border={{
-                    width: 0.5,
-                    color: "gray2",
-                    hover_color: `${DAY_WORK_INFO[order]?.borderColor}`,
-                }}
-                cursorPointer
-                key={`${DAY_WORK_INFO[order].workIndex}-${DAY_WORK_INFO[order].workHour}-${order}`}
-            >
-                <Text size="sm" weight="bold">
-                    {workAgent}
-                </Text>
-                <Box
+        {workSheet.map((workAgent, order) => {
+            const { workType, workHour, workIndex, time, color, borderColor } =
+                DAY_WORK_INFO[order];
+            const isAccessControl = workType === "access-control";
+            return (
+                <WorkBox
+                    onClick={() => {
+                        const info = getExchangeWorkInfo(exchangeWorkInfo, {
+                            workName: workAgent,
+                            workTime: workHour,
+                            workIndex,
+                            date,
+                            day,
+                        });
+                        setExchangeWorkInfo(info);
+                    }}
                     display="flex"
-                    flexDirection="column"
                     align="center"
                     justify="center"
-                    gap=".5rem"
-                    background="transparent"
+                    flexDirection="column"
+                    gap=".25rem"
+                    width="100%"
+                    pb={8}
+                    pt={8}
+                    pl={4}
+                    pr={4}
+                    borderRadius="bsm"
+                    shadow="shadowXxsm"
+                    hover_shadow="shadowLg"
+                    background={
+                        (exchangeWorkInfo &&
+                            exchangeWorkInfo.end?.workName === workAgent &&
+                            exchangeWorkInfo.end.date === date &&
+                            exchangeWorkInfo.end.workIndex === order) ||
+                        (exchangeWorkInfo &&
+                            exchangeWorkInfo.start?.workName === workAgent &&
+                            exchangeWorkInfo.start.date === date &&
+                            exchangeWorkInfo.start.workIndex === order)
+                            ? `${borderColor}`
+                            : "white"
+                    }
+                    border={{
+                        width: 1,
+                        color: isAccessControl ? "white" : "white",
+                        hover_color: borderColor,
+                    }}
+                    cursorPointer
+                    key={`${workIndex}-${workHour}-${order}`}
                 >
-                    <Badge
-                        size="sm"
-                        variant="light"
-                        color={DAY_WORK_INFO[order]?.color}
+                    <Text size="sm" weight="bold">
+                        {workAgent}
+                    </Text>
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        align="center"
+                        justify="center"
+                        gap=".5rem"
+                        background="transparent"
                     >
-                        <Text weight="bold" size="xs">
-                            {DAY_WORK_INFO[order]?.workHour}
-                        </Text>
-                    </Badge>
-                    <Badge
-                        size="sm"
-                        variant="dot"
-                        color={DAY_WORK_INFO[order]?.color}
-                    >
-                        <Text weight="bold" size="xs">
-                            {DAY_WORK_INFO[order]?.time}
-                        </Text>
-                    </Badge>
-                </Box>
-            </WorkBox>
-        ))}
+                        <Badge size="sm" variant="light" color={color}>
+                            <Text weight="bold" size="xs">
+                                {isAccessControl ? "출입관리" : "셔틀버스"}{" "}
+                                {workHour}
+                            </Text>
+                        </Badge>
+                        <Badge size="sm" variant="dot" color={color}>
+                            <Text weight="bold" size="xs">
+                                {time}
+                            </Text>
+                        </Badge>
+                    </Box>
+                </WorkBox>
+            );
+        })}
     </Box>
 );
 
