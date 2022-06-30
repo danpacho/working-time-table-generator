@@ -1,12 +1,10 @@
 import styled, { css } from "styled-components";
 
-import borderRadius, {
-    BorderRadiusType,
-} from "../../../../styles/utils/borderRadius";
-import fontSize, { FontSizeType } from "../../../../styles/utils/font";
-import pallete, { PalleteType } from "../../../../styles/utils/pallete";
-import shadow, { ShadowType } from "../../../../styles/utils/shadow";
-import zIndexes, { ZIndexesType } from "../../../../styles/utils/zIndex";
+import borderRadius, { BorderRadiusType } from "@styles/utils/borderRadius";
+import fontSize, { FontSizeType } from "@styles/utils/font";
+import pallete, { PalleteType } from "@styles/utils/pallete";
+import shadow, { ShadowType } from "@styles/utils/shadow";
+import zIndexes, { ZIndexesType } from "@styles/utils/zIndex";
 
 type PixelType = number | string;
 type OverflowType = "scroll" | "hidden" | "visible" | "auto";

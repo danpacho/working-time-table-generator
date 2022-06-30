@@ -1,14 +1,15 @@
-import pallete from "../../../../styles/utils/pallete";
+import pallete from "@styles/utils/pallete";
 import { Check, Confetti, Settings, Trash } from "tabler-icons-react";
 
 import { useEffect, useState } from "react";
 
-import { Box } from "../../../components/atoms";
+import { Box } from "@components/atoms";
 
 import { Button, Modal, NumberInput, Popover, Text } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 
+import dayjs from "dayjs";
 import "dayjs/locale/ko";
 
 import {
@@ -16,12 +17,11 @@ import {
     getWorkCycleInfo,
     isHolliday,
     WorkInfoType,
-} from "../../../core/work-gen";
+} from "@core/work-gen";
 
-import { WORK_INFO } from "../../../../constants/workInfo";
-import { WORK_INFO_ARRAY_KEY } from "../../../../constants/localStorageKey";
-import dayjs from "dayjs";
-import WorkSheet from "../../../components/work-sheet";
+import { WORK_INFO } from "@constants/workInfo";
+import { WORK_INFO_ARRAY_KEY } from "@constants/localStorageKey";
+import WorkSheet from "@components/work-sheet";
 
 interface SlectDateProps {
     agentList: string[];

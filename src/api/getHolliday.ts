@@ -1,6 +1,8 @@
-import { API_PARAM_CONFIG, API_RESPONSE, API_URL } from "../../constants/api";
-import { axiosGET } from "./axios";
-import { dateEqualizer, numToDate } from "../core/work-gen";
+import { API_PARAM_CONFIG, API_RESPONSE, API_URL } from "@constants/api";
+
+import { axiosGET } from "@api/axios";
+
+import { dateEqualizer, numToDate } from "@core/work-gen";
 
 const getNationalHolliday = async (
     APIparams: Omit<API_PARAM_CONFIG, "ServiceKey">

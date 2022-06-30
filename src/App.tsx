@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useLocalStorage } from "@mantine/hooks";
 
-import { AGENT_LIST_KEY } from "../constants/localStorageKey";
+import { AGENT_LIST_KEY } from "@constants/localStorageKey";
 
 import AgentListModalPage from "./pages/agent-update";
 import TabPage from "./pages/tabs";

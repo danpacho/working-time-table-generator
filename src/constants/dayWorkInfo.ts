@@ -1,4 +1,4 @@
-import { PalleteType } from "../styles/utils/pallete";
+import { PalleteType } from "@styles/utils/pallete";
 
 const DAY_WORK_INFO: {
     time: string;

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import media from "../../../styles/utils/media";
-import animation from "../../../styles/utils/animation";
+import media from "@styles/utils/media";
+import animation from "@styles/utils/animation";
 
 import { Exchange, Trash } from "tabler-icons-react";
 
@@ -14,13 +14,14 @@ import {
     SimpleGrid,
     Text,
 } from "@mantine/core";
-
-import { WorkInfoType } from "../../core/work-gen";
-
-import { Box } from "../atoms";
-import { DAY_WORK_INFO } from "../../../constants/dayWorkInfo";
 import { useLocalStorageValue } from "@mantine/hooks";
-import { AGENT_LIST_KEY } from "../../../constants/localStorageKey";
+
+import { Box } from "@components/atoms";
+
+import { WorkInfoType } from "@core/work-gen";
+
+import { AGENT_LIST_KEY } from "@constants/localStorageKey";
+import { DAY_WORK_INFO } from "@constants/dayWorkInfo";
 
 interface ExchangeInfo extends Pick<WorkInfoType<string>, "date" | "day"> {
     workName: string;

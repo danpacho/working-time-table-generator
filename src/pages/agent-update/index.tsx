@@ -1,4 +1,4 @@
-import pallete from "../../../styles/utils/pallete";
+import pallete from "@styles/utils/pallete";
 import { useState } from "react";
 
 import { Button, Modal } from "@mantine/core";

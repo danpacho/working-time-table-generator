@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@pages/*": ["src/pages*"],
+            "@components/*": ["src/components/*"],
+            "@constants/*": ["src/constants/*"],
+            "@hooks/*": ["src/hooks/*"],
+            "@utils/*": ["src/utils/*"],
+            "@core/*": ["src/core/*"],
+            "@styles/*": ["src/styles/*"],
+            "@api/*": ["src/api/*"]
+        },
+        "importHelpers": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true
+    }
+}

@@ -1,7 +1,7 @@
-import { Text } from "@mantine/core";
 import { ReactNode } from "react";
-import { Box } from "../../atoms";
 
+import { Text } from "@mantine/core";
+import { Box } from "@components/atoms";
 interface ListProps {
     listElement: string | ReactNode;
 }

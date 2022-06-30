@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import media from "../../../styles/utils/media";
+import media from "@styles/utils/media";
 
 import { Calendar, UserSearch } from "tabler-icons-react";
 
 import { Tabs, Text } from "@mantine/core";
 
-import { Box } from "../../components/atoms";
+import { Box } from "@components/atoms";
 
 import { WorkTable } from "./work-table";
 import { AgentList } from "./agent-list";
