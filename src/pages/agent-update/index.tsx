@@ -5,7 +5,7 @@ import { Button, Modal } from "@mantine/core";
 
 import { Edit, Users } from "tabler-icons-react";
 
-import UpdateAgentList from "./UpdateAgentList";
+import AgentUpdate from "./agent-update";
 
 export interface CRUDAgentProps {
     agentList: string[];
@@ -45,7 +45,7 @@ function AgentPage({ agentList, setAgentList }: CRUDAgentProps) {
                     alignItems: "center",
                 }}
             >
-                <UpdateAgentList agentList={agentList} setAgentList={setAgentList} />
+                <AgentUpdate agentList={agentList} setAgentList={setAgentList} />
             </Modal>
         </>
     );

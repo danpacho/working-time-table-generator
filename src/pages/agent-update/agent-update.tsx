@@ -1,10 +1,9 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Button, Badge, Text, Tooltip } from "@mantine/core";
 
 import { Trash, UserCircle } from "tabler-icons-react";
 
-import { Box } from "../../components/atoms";
-import UserInput from "../../components/atoms/input";
+import { Box, UserInput } from "../../components/atoms";
 
 import { CRUDAgentProps } from ".";
 
@@ -16,7 +15,7 @@ const updateAgentList = (agentList: string[], agentName: string) => {
 const removeAgentList = (agentList: string[], agentName: string) =>
     agentList.filter((agent) => agent !== agentName);
 
-function UpdateAgentList({ agentList, setAgentList }: CRUDAgentProps) {
+function AgentUpdate({ agentList, setAgentList }: CRUDAgentProps) {
     const [agentName, setAgentName] = useState("");
 
     const agentSubmitHandler = () => {
@@ -38,7 +37,7 @@ function UpdateAgentList({ agentList, setAgentList }: CRUDAgentProps) {
             gap=".75rem"
             maxHeight="30rem"
             overflowY="scroll"
-            width="22rem"
+            width="100%"
         >
             <Box position="sticky" top={0} zIndex="zContnet">
                 <UserInput
@@ -99,4 +98,4 @@ function UpdateAgentList({ agentList, setAgentList }: CRUDAgentProps) {
     );
 }
 
-export default UpdateAgentList;
+export default AgentUpdate;
