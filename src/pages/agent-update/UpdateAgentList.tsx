@@ -3,8 +3,8 @@ import { Button, Badge, Text, Tooltip } from "@mantine/core";
 
 import { Trash, UserCircle } from "tabler-icons-react";
 
-import { Box } from "../../atoms/container/index";
-import UserInput from "../../atoms/input";
+import { Box } from "../../components/atoms";
+import UserInput from "../../components/atoms/input";
 
 import { CRUDAgentProps } from ".";
 

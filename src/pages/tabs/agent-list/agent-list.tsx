@@ -1,8 +1,9 @@
 import { Avatar, Text } from "@mantine/core";
 import { User } from "tabler-icons-react";
 import { AgentListProp } from "..";
-import { Box } from "../../../atoms/container";
-import List from "../../../atoms/list";
+
+import { Box } from "../../../components/atoms";
+import { List } from "../../../components/molecules";
 
 function AgentList({ agentList }: AgentListProp) {
     const sortedAgentList = agentList.sort();

@@ -3,11 +3,12 @@ import { Check, Confetti, Settings, Trash } from "tabler-icons-react";
 
 import { useEffect, useState } from "react";
 
-import { Box } from "../../../atoms/container";
+import { Box } from "../../../components/atoms";
 
 import { Button, Modal, NumberInput, Popover, Text } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
+
 import "dayjs/locale/ko";
 
 import {
@@ -15,12 +16,12 @@ import {
     getWorkCycleInfo,
     isHolliday,
     WorkInfoType,
-} from "../../../../utils/date";
+} from "../../../core/work-gen";
 
-import WorkSheet from "../../../workSheet";
 import { WORK_INFO } from "../../../../constants/workInfo";
 import { WORK_INFO_ARRAY_KEY } from "../../../../constants/localStorageKey";
 import dayjs from "dayjs";
+import WorkSheet from "../../../components/work-sheet";
 
 interface SlectDateProps {
     agentList: string[];

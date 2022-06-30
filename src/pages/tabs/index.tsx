@@ -5,10 +5,10 @@ import { Calendar, UserSearch } from "tabler-icons-react";
 
 import { Tabs, Text } from "@mantine/core";
 
-import { Box } from "../../atoms/container";
+import { Box } from "../../components/atoms";
 
-import AgentList from "./agentList/AgentList";
-import WorkInfoEditor from "./workInfoEditor/WorkInfoEditor";
+import { WorkTable } from "./work-table";
+import { AgentList } from "./agent-list";
 
 const MainContainer = styled(Box)`
     left: 20%;
@@ -51,7 +51,7 @@ function MainTabPage({ agentList }: AgentListProp) {
                     }
                     icon={<Calendar size={18} />}
                 >
-                    <WorkInfoEditor agentList={agentList} />
+                    <WorkTable agentList={agentList} />
                 </Tabs.Tab>
                 <Tabs.Tab
                     label={
