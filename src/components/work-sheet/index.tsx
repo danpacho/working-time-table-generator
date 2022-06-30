@@ -4,7 +4,7 @@ import animation from "@styles/utils/animation";
 
 import { Exchange, Trash } from "tabler-icons-react";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
     ActionIcon,
@@ -71,7 +71,6 @@ interface WorkSheetProps {
     workInfoArray: WorkInfoType<string>[];
 }
 function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
-    console.log(workInfoArray);
     const [activePage, setPage] = useState(1);
     const [exchangeWorkInfo, setExchangeWorkInfo] =
         useState<ExchangeWorkInfo | null>(null);
@@ -89,6 +88,7 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                             {...workInfo}
                             exchangeWorkInfo={exchangeWorkInfo}
                             setExchangeWorkInfo={setExchangeWorkInfo}
+                            setWorkInfoArray={setWorkInfoArray}
                             key={workInfo.date}
                         />
                     ))}
@@ -236,16 +236,32 @@ interface DayWorkSheetProps extends WorkInfoType<string> {
     setExchangeWorkInfo: React.Dispatch<
         React.SetStateAction<ExchangeWorkInfo | null>
     >;
+    setWorkInfoArray: (
+        val:
+            | WorkInfoType<string>[]
+            | ((prevState: WorkInfoType<string>[]) => WorkInfoType<string>[])
+    ) => void;
     exchangeWorkInfo: ExchangeWorkInfo | null;
 }
 const DayWorkSheet = ({
     date,
     day,
     workSheet,
+    setWorkInfoArray,
     setExchangeWorkInfo,
     exchangeWorkInfo,
     isCycleStart,
 }: DayWorkSheetProps) => {
+    const validateExistingData = useCallback((order: number) => {
+        if (
+            DAY_WORK_INFO[order]?.color === "undefined" ||
+            DAY_WORK_INFO[order]?.time === "undefined" ||
+            DAY_WORK_INFO[order]?.workHour === "undefined"
+        ) {
+            setWorkInfoArray([]);
+            setExchangeWorkInfo(null);
+        }
+    }, []);
     return (
         <Box
             display="flex"
@@ -291,81 +307,84 @@ const DayWorkSheet = ({
                 </Text>
             </Box>
 
-            {workSheet.map((workAgent, order) => (
-                <WorkBox
-                    onClick={() => {
-                        const info = getExchangeWorkInfo(exchangeWorkInfo, {
-                            workName: workAgent,
-                            workIndex: DAY_WORK_INFO[order].workIndex,
-                            workTime: DAY_WORK_INFO[order].workHour,
-                            date: date,
-                            day,
-                        });
-                        setExchangeWorkInfo(info);
-                    }}
-                    display="flex"
-                    align="center"
-                    justify="center"
-                    flexDirection="column"
-                    gap=".5rem"
-                    width="100%"
-                    pb={8}
-                    pt={8}
-                    borderRadius="bsm"
-                    shadow="shadowXxsm"
-                    hover_shadow="shadowLg"
-                    background={
-                        (exchangeWorkInfo &&
-                            exchangeWorkInfo.end?.workName === workAgent &&
-                            exchangeWorkInfo.end.date === date &&
-                            exchangeWorkInfo.end.workIndex === order) ||
-                        (exchangeWorkInfo &&
-                            exchangeWorkInfo.start?.workName === workAgent &&
-                            exchangeWorkInfo.start.date === date &&
-                            exchangeWorkInfo.start.workIndex === order)
-                            ? `${DAY_WORK_INFO[order]?.borderColor}`
-                            : "white"
-                    }
-                    border={{
-                        width: 0.5,
-                        color: "gray2",
-                        hover_color: `${DAY_WORK_INFO[order]?.borderColor}`,
-                    }}
-                    cursorPointer
-                    key={`${DAY_WORK_INFO[order].workIndex}-${DAY_WORK_INFO[order].workHour}-${order}`}
-                >
-                    <Text size="sm" weight="bold">
-                        {workAgent}
-                    </Text>
-                    <Box
+            {workSheet.map((workAgent, order) => {
+                validateExistingData(order);
+                return (
+                    <WorkBox
+                        onClick={() => {
+                            const info = getExchangeWorkInfo(exchangeWorkInfo, {
+                                workName: workAgent,
+                                workIndex: DAY_WORK_INFO[order].workIndex,
+                                workTime: DAY_WORK_INFO[order].workHour,
+                                date: date,
+                                day,
+                            });
+                            setExchangeWorkInfo(info);
+                        }}
                         display="flex"
-                        flexDirection="column"
                         align="center"
                         justify="center"
+                        flexDirection="column"
                         gap=".5rem"
-                        background="transparent"
+                        width="100%"
+                        pb={8}
+                        pt={8}
+                        borderRadius="bsm"
+                        shadow="shadowXxsm"
+                        hover_shadow="shadowLg"
+                        background={
+                            (exchangeWorkInfo &&
+                                exchangeWorkInfo.end?.workName === workAgent &&
+                                exchangeWorkInfo.end.date === date &&
+                                exchangeWorkInfo.end.workIndex === order) ||
+                            (exchangeWorkInfo &&
+                                exchangeWorkInfo.start?.workName === workAgent &&
+                                exchangeWorkInfo.start.date === date &&
+                                exchangeWorkInfo.start.workIndex === order)
+                                ? `${DAY_WORK_INFO[order]?.borderColor}`
+                                : "white"
+                        }
+                        border={{
+                            width: 0.5,
+                            color: "gray2",
+                            hover_color: `${DAY_WORK_INFO[order]?.borderColor}`,
+                        }}
+                        cursorPointer
+                        key={`${DAY_WORK_INFO[order].workIndex}-${DAY_WORK_INFO[order].workHour}-${order}`}
                     >
-                        <Badge
-                            size="sm"
-                            variant="light"
-                            color={DAY_WORK_INFO[order].color}
+                        <Text size="sm" weight="bold">
+                            {workAgent}
+                        </Text>
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            align="center"
+                            justify="center"
+                            gap=".5rem"
+                            background="transparent"
                         >
-                            <Text weight="bold" size="xs">
-                                {DAY_WORK_INFO[order].workHour}
-                            </Text>
-                        </Badge>
-                        <Badge
-                            size="sm"
-                            variant="dot"
-                            color={DAY_WORK_INFO[order].color}
-                        >
-                            <Text weight="bold" size="xs">
-                                {DAY_WORK_INFO[order].time}
-                            </Text>
-                        </Badge>
-                    </Box>
-                </WorkBox>
-            ))}
+                            <Badge
+                                size="sm"
+                                variant="light"
+                                color={DAY_WORK_INFO[order].color}
+                            >
+                                <Text weight="bold" size="xs">
+                                    {DAY_WORK_INFO[order].workHour}
+                                </Text>
+                            </Badge>
+                            <Badge
+                                size="sm"
+                                variant="dot"
+                                color={DAY_WORK_INFO[order].color}
+                            >
+                                <Text weight="bold" size="xs">
+                                    {DAY_WORK_INFO[order].time}
+                                </Text>
+                            </Badge>
+                        </Box>
+                    </WorkBox>
+                );
+            })}
         </Box>
     );
 };
