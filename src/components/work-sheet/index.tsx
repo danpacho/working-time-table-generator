@@ -88,11 +88,14 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
             if (workInfoArray[0].workSheet.length !== WORK_INFO.WORK_PER_DAY) {
                 setWorkInfoArray([]);
                 setExchangeWorkInfo(null);
+                setIsValidate(false);
+            } else {
+                setIsValidate(true);
             }
         } else {
             setIsValidate(true);
         }
-    }, []);
+    }, [workInfoArray]);
     return (
         <>
             <SimpleGrid cols={cycleNumber} spacing="md">
