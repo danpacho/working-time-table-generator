@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 import { HOLLIDAY } from "@constants/holliday";
 import { WORK_INFO } from "@constants/workInfo";
-import { getIterationArray, shift, shuffle } from "./array";
+import { getIterationArray, shift, shuffle } from "@core/array";
 
 const DAY = ["일", "월", "화", "수", "목", "금", "토"] as const;
 const HOLLIDAY_INDEX = [0, 6];
@@ -100,7 +100,7 @@ const getWorkInfo = <WorkerListType>({
         return {
             workSheet,
             dayJsObject: workingDayArray[dayIndex],
-            day: DAY[workingDayArray[dayIndex].day()],
+            day: DAY[workingDayArray[dayIndex]?.day()],
             date: workingDayArray[dayIndex].format("YYYY년 MM월 DD일"),
             isCycleStart: dayIndex === 0,
         };
