@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import media from "@styles/utils/media";
 
-import { Calendar, UserSearch } from "tabler-icons-react";
+import { Calendar, Users } from "tabler-icons-react";
 
 import { Tabs, Text } from "@mantine/core";
 
 import { Box } from "@components/atoms";
 
+import { CRUDAgentProps, AgentUpdate } from "./agent-update";
 import { WorkTable } from "./work-table";
-import { AgentList } from "./agent-list";
 
 const MainContainer = styled(Box)`
     left: 20%;
@@ -17,11 +17,7 @@ const MainContainer = styled(Box)`
     }
 `;
 
-export interface AgentListProp {
-    agentList: string[];
-}
-
-function MainTabPage({ agentList }: AgentListProp) {
+function MainTabPage({ agentList, setAgentList }: CRUDAgentProps) {
     return (
         <MainContainer
             display="flex"
@@ -56,12 +52,12 @@ function MainTabPage({ agentList }: AgentListProp) {
                 <Tabs.Tab
                     label={
                         <Text size="sm" variant="text" weight="bold">
-                            요원 목록
+                            요원 수정
                         </Text>
                     }
-                    icon={<UserSearch size={18} />}
+                    icon={<Users size={18} />}
                 >
-                    <AgentList agentList={agentList} />
+                    <AgentUpdate agentList={agentList} setAgentList={setAgentList} />
                 </Tabs.Tab>
             </Tabs>
         </MainContainer>

@@ -3,14 +3,15 @@ import { Check, Confetti, Settings, Trash } from "tabler-icons-react";
 
 import { useEffect, useState } from "react";
 
-import { Box } from "@components/atoms";
-
 import { Button, Modal, NumberInput, Popover, Text } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/ko";
+
+import { WORK_INFO } from "@constants/workInfo";
+import { WORK_INFO_ARRAY_KEY } from "@constants/localStorageKey";
 
 import {
     addDayToString,
@@ -19,8 +20,7 @@ import {
     WorkInfoType,
 } from "@core/work-gen";
 
-import { WORK_INFO } from "@constants/workInfo";
-import { WORK_INFO_ARRAY_KEY } from "@constants/localStorageKey";
+import { Box } from "@components/atoms";
 import WorkSheet from "@components/work-sheet";
 
 interface SlectDateProps {
@@ -30,6 +30,9 @@ interface SlectDateProps {
 const validateDate = (date: dayjs.Dayjs) =>
     isHolliday(date) ? dayjs(addDayToString(date, 2)) : date;
 
+const getNextDay = (dayJsObject: dayjs.Dayjs, dayMount: number = 1): dayjs.Dayjs =>
+    dayjs(addDayToString(dayjs(dayJsObject), dayMount));
+
 function WorkInfoEditor({ agentList }: SlectDateProps) {
     const [workInfoArray, setWorkInfoArray] = useLocalStorage<
         WorkInfoType<string>[]
@@ -38,32 +41,23 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
         defaultValue: [],
     });
     const workInfoArrayLength = workInfoArray?.length;
+    const isWorkNull = workInfoArrayLength === 0;
 
     const [openCalendar, setOpenCalander] = useState(false);
     const [openeReset, setOpenReset] = useState(false);
-    const [cycle, setCycle] = useState(1);
 
+    const [cycle, setCycle] = useState(1);
     const [workStartDate, setWorkStartDate] = useState<dayjs.Dayjs | null>(
-        workInfoArrayLength !== 0
-            ? dayjs(
-                  addDayToString(
-                      dayjs(workInfoArray[workInfoArrayLength - 1]?.dayJsObject),
-                      1
-                  )
-              )
-            : dayjs()
+        isWorkNull
+            ? dayjs()
+            : getNextDay(workInfoArray[workInfoArrayLength - 1]?.dayJsObject)
     );
 
     useEffect(() => {
         setWorkStartDate(
-            workInfoArrayLength !== 0
-                ? dayjs(
-                      addDayToString(
-                          dayjs(workInfoArray[workInfoArrayLength - 1]?.dayJsObject),
-                          1
-                      )
-                  )
-                : dayjs()
+            isWorkNull
+                ? dayjs()
+                : getNextDay(workInfoArray[workInfoArrayLength - 1]?.dayJsObject)
         );
     }, [workInfoArray]);
 
@@ -75,7 +69,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                     flexDirection="row"
                     align="center"
                     gap="1rem"
-                    mt={16}
+                    mt={30}
                 >
                     <Button
                         variant="outline"
