@@ -26,7 +26,7 @@ import { WORK_INFO } from "@constants/workInfo";
 
 interface ExchangeInfo extends Pick<WorkInfoType<string>, "date" | "day"> {
     workName: string;
-    workIndex: number;
+    workOrder: number;
     workTime: string;
 }
 interface ExchangeWorkInfo {
@@ -45,9 +45,9 @@ const getUpdatedWorkInfo = (
     const exchangeStartIndex = dateArray.indexOf(exchangeWorkInfo.start.date);
     const exchangeEndIndex = dateArray.indexOf(exchangeWorkInfo.end.date);
 
-    workInfoArray[exchangeStartIndex].workSheet[exchangeWorkInfo.start.workIndex] =
+    workInfoArray[exchangeStartIndex].workSheet[exchangeWorkInfo.start.workOrder] =
         exchangeWorkInfo.end.workName;
-    workInfoArray[exchangeEndIndex].workSheet[exchangeWorkInfo.end.workIndex] =
+    workInfoArray[exchangeEndIndex].workSheet[exchangeWorkInfo.end.workOrder] =
         exchangeWorkInfo.start.workName;
 
     return workInfoArray;
@@ -95,6 +95,7 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
             setIsValidate(true);
         }
     }, [workInfoArray]);
+
     return (
         <>
             <SimpleGrid cols={cycleNumber} spacing="md">
@@ -308,26 +309,29 @@ const DayWorkSheet = ({
         </Box>
 
         {workSheet.map((workAgent, order) => {
-            const { workType, workHour, workIndex, time, color, borderColor } =
+            const { workType, workHour, workOrder, time, color, borderColor } =
                 DAY_WORK_INFO[order];
             const isAccessControl = workType === "access-control";
             return (
                 <WorkBox
                     onClick={() => {
-                        const info = getExchangeWorkInfo(exchangeWorkInfo, {
-                            workName: workAgent,
-                            workTime: workHour,
-                            workIndex,
-                            date,
-                            day,
-                        });
-                        setExchangeWorkInfo(info);
+                        const updatedExchangeWorkInfo = getExchangeWorkInfo(
+                            exchangeWorkInfo,
+                            {
+                                workName: workAgent,
+                                workTime: workHour,
+                                workOrder,
+                                date,
+                                day,
+                            }
+                        );
+                        setExchangeWorkInfo(updatedExchangeWorkInfo);
                     }}
                     display="flex"
                     align="center"
                     justify="center"
                     flexDirection="column"
-                    gap=".25rem"
+                    gap=".35rem"
                     width="100%"
                     pb={8}
                     pt={8}
@@ -340,11 +344,11 @@ const DayWorkSheet = ({
                         (exchangeWorkInfo &&
                             exchangeWorkInfo.end?.workName === workAgent &&
                             exchangeWorkInfo.end.date === date &&
-                            exchangeWorkInfo.end.workIndex === order) ||
+                            exchangeWorkInfo.end.workOrder === order) ||
                         (exchangeWorkInfo &&
                             exchangeWorkInfo.start?.workName === workAgent &&
                             exchangeWorkInfo.start.date === date &&
-                            exchangeWorkInfo.start.workIndex === order)
+                            exchangeWorkInfo.start.workOrder === order)
                             ? `${borderColor}`
                             : "white"
                     }
@@ -354,7 +358,7 @@ const DayWorkSheet = ({
                         hover_color: borderColor,
                     }}
                     cursorPointer
-                    key={`${workIndex}-${workHour}-${order}`}
+                    key={`${workOrder}-${workHour}-${order}`}
                 >
                     <Text size="sm" weight="bold">
                         {workAgent}
@@ -373,11 +377,27 @@ const DayWorkSheet = ({
                                 {workHour}
                             </Text>
                         </Badge>
-                        <Badge size="sm" variant="dot" color={color}>
-                            <Text weight="bold" size="xs">
-                                {time}
-                            </Text>
-                        </Badge>
+
+                        {typeof time === "string" ? (
+                            <Badge size="sm" variant="dot" color={color}>
+                                <Text weight="bold" size="xs">
+                                    {time}
+                                </Text>
+                            </Badge>
+                        ) : (
+                            time.map((time) => (
+                                <Badge
+                                    key={time}
+                                    size="sm"
+                                    variant="dot"
+                                    color={color}
+                                >
+                                    <Text weight="bold" size="xs">
+                                        {time}
+                                    </Text>
+                                </Badge>
+                            ))
+                        )}
                     </Box>
                 </WorkBox>
             );
