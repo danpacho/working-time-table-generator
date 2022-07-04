@@ -1,9 +1,9 @@
 import styled from "styled-components";
+
 import { useLocalStorage } from "@mantine/hooks";
 
 import { AGENT_LIST_KEY } from "@constants/localStorageKey";
 
-import AgentListModalPage from "./pages/agent-update";
 import TabPage from "./pages/tabs";
 
 const MainContainer = styled.main`
@@ -26,8 +26,7 @@ function App() {
 
     return (
         <MainContainer>
-            <TabPage agentList={agentList} />
-            <AgentListModalPage agentList={agentList} setAgentList={setAgentList} />
+            <TabPage agentList={agentList} setAgentList={setAgentList} />
         </MainContainer>
     );
 }
