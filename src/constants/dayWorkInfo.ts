@@ -26,10 +26,10 @@ const DAY_WORK_INFO: {
         workType: "access-control",
     },
     {
-        time: ["09:30 ~ 11:30", "13:30 ~ 15:15"],
-        workHour: "3시간 45분",
+        time: ["09:30 ~ 11:30", "13:30 ~ 15:00"],
+        workHour: "3시간 30분",
         color: "teal",
-        borderColor: "teal4",
+        borderColor: "teal5",
         workOrder: 2,
         workType: "shuttle-operation",
     },
