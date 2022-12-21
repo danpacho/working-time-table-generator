@@ -13,10 +13,10 @@ export interface API_RESPONSE {
         body: {
             items: {
                 item: {
-                    locdate: number;
+                    locate: number;
                     seq: number;
                     dateKind: number;
-                    isHolliday: "Y";
+                    isHoliday: "Y";
                     dateName: string;
                 }[];
             };

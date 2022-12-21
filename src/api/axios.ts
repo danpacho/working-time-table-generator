@@ -12,7 +12,7 @@ const axiosGET = async <RequestDataType>(
         return response;
     } catch (err) {
         throw new Error(
-            `\n\n${err}\n\nGET method error occured @: ${AxiosGETProps.url}`
+            `\n\n${err}\n\nGET method error occurred @: ${AxiosGETProps.url}`
         );
     }
 };

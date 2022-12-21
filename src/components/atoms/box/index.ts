@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 
 import borderRadius, { BorderRadiusType } from "@styles/utils/borderRadius";
 import fontSize, { FontSizeType } from "@styles/utils/font";
-import pallete, { PalleteType } from "@styles/utils/pallete";
+import pallet, { PalletType } from "@styles/utils/pallet";
 import shadow, { ShadowType } from "@styles/utils/shadow";
 import zIndexes, { ZIndexesType } from "@styles/utils/zIndex";
 
@@ -10,7 +10,7 @@ type PixelType = number | string;
 type OverflowType = "scroll" | "hidden" | "visible" | "auto";
 type WidthHeightType = "fit-content" | "max-content" | "min-content" | PixelType;
 
-interface ConatinerStyle {
+interface ContainerStyle {
     display?: "flex" | "grid" | "block" | "inline" | "none";
     flexDirection?: "row" | "row-reverse" | "column" | "column-reverse";
     flexWrap?: "no-wrap" | "wrap" | "wrap-reverse";
@@ -54,15 +54,15 @@ interface ConatinerStyle {
 
     border?: {
         width: PixelType;
-        color: PalleteType;
-        hover_color?: PalleteType;
+        color: PalletType;
+        hover_color?: PalletType;
     };
 
-    background?: PalleteType;
-    hover_background?: PalleteType;
+    background?: PalletType;
+    hover_background?: PalletType;
 
-    color?: PalleteType;
-    hover_color?: PalleteType;
+    color?: PalletType;
+    hover_color?: PalletType;
     fontSize?: FontSizeType;
     fontWeight?:
         | "100"
@@ -88,12 +88,12 @@ interface ConatinerStyle {
 }
 const containerStyle = {
     default: {
-        background: pallete.white,
+        background: pallet.white,
         borderRadius: borderRadius.bmd,
         borderColor: "transparent",
         hover_borderColor: "transparent",
         borderWidth: "1.25px",
-        color: pallete.trueDeepDark,
+        color: pallet.trueDeepDark,
         fontSize: fontSize.md,
     },
 };
@@ -129,7 +129,7 @@ const getBoxModel = ({ all, top, bottom, right, left, type }: BoxModelProps) => 
     `;
 };
 
-const Box = styled.div<ConatinerStyle>`
+const Box = styled.div<ContainerStyle>`
     transition: all ease 0.25s;
 
     display: ${(p) => p.display ?? "unset"};
@@ -171,9 +171,9 @@ const Box = styled.div<ConatinerStyle>`
     max-height: ${(p) => (p.maxHeight ? transformPixel(p.maxHeight) : "unset")};
 
     background-color: ${(p) =>
-        p.background ? pallete[p.background] : containerStyle.default.background};
+        p.background ? pallet[p.background] : containerStyle.default.background};
 
-    color: ${(p) => (p.color ? pallete[p.color] : containerStyle.default.color)};
+    color: ${(p) => (p.color ? pallet[p.color] : containerStyle.default.color)};
     font-size: ${(p) =>
         p.fontSize ? fontSize[p.fontSize] : containerStyle.default.fontSize};
     font-weight: ${(p) => p.fontWeight ?? "unset"};
@@ -206,7 +206,7 @@ const Box = styled.div<ConatinerStyle>`
     border-style: solid;
     border-color: ${(p) =>
         p.border?.color
-            ? pallete[p.border.color]
+            ? pallet[p.border.color]
             : containerStyle.default.borderColor};
     border-width: ${(p) =>
         p.border?.width
@@ -226,14 +226,13 @@ const Box = styled.div<ConatinerStyle>`
     cursor: ${(p) => (p.cursorPointer ? "pointer" : "auto")};
 
     &:hover {
-        color: ${(p) => p.hover_color && pallete[p.hover_color]};
+        color: ${(p) => p.hover_color && pallet[p.hover_color]};
 
         border-color: ${(p) =>
             p.border?.hover_color
-                ? pallete[p.border.hover_color]
+                ? pallet[p.border.hover_color]
                 : containerStyle.default.hover_borderColor};
-        background-color: ${(p) =>
-            p.hover_background && pallete[p.hover_background]};
+        background-color: ${(p) => p.hover_background && pallet[p.hover_background]};
 
         box-shadow: ${(p) => p.hover_shadow && shadow[p.hover_shadow]};
     }

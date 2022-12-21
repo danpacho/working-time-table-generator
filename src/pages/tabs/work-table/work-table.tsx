@@ -1,4 +1,4 @@
-import pallete from "@styles/utils/pallete";
+import pallet from "@styles/utils/pallet";
 import { Check, Confetti, Settings, Trash } from "tabler-icons-react";
 
 import { useEffect, useState } from "react";
@@ -16,24 +16,24 @@ import { WORK_INFO_ARRAY_KEY } from "@constants/localStorageKey";
 import {
     addDayToString,
     getWorkCycleInfo,
-    isHolliday,
+    isHoliday,
     WorkInfoType,
 } from "@core/work-gen";
 
 import { Box } from "@components/atoms";
 import WorkSheet from "@components/work-sheet";
 
-interface SlectDateProps {
+interface SelectDateProps {
     agentList: string[];
 }
 
 const validateDate = (date: dayjs.Dayjs) =>
-    isHolliday(date) ? dayjs(addDayToString(date, 2)) : date;
+    isHoliday(date) ? dayjs(addDayToString(date, 2)) : date;
 
 const getNextDay = (dayJsObject: dayjs.Dayjs, dayMount: number = 1): dayjs.Dayjs =>
     dayjs(addDayToString(dayjs(dayJsObject), dayMount));
 
-function WorkInfoEditor({ agentList }: SlectDateProps) {
+function WorkInfoEditor({ agentList }: SelectDateProps) {
     const [workInfoArray, setWorkInfoArray] = useLocalStorage<
         WorkInfoType<string>[]
     >({
@@ -43,8 +43,8 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
     const workInfoArrayLength = workInfoArray?.length;
     const isWorkNull = workInfoArrayLength === 0;
 
-    const [openCalendar, setOpenCalander] = useState(false);
-    const [openeReset, setOpenReset] = useState(false);
+    const [openCalendar, setOpenCalender] = useState(false);
+    const [openReset, setOpenReset] = useState(false);
 
     const [cycle, setCycle] = useState(1);
     const [workStartDate, setWorkStartDate] = useState<dayjs.Dayjs | null>(
@@ -75,7 +75,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         variant="outline"
                         color="teal"
                         size="xs"
-                        onClick={() => setOpenCalander(true)}
+                        onClick={() => setOpenCalender(true)}
                         rightIcon={<Check color="teal" size={14} />}
                     >
                         {workInfoArrayLength !== 0
@@ -84,7 +84,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                     </Button>
                     {workInfoArrayLength !== 0 && (
                         <Popover
-                            opened={openeReset}
+                            opened={openReset}
                             onClose={() => setOpenReset(false)}
                             target={
                                 <Button
@@ -137,10 +137,10 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
 
             <Modal
                 opened={openCalendar}
-                onClose={() => setOpenCalander(false)}
+                onClose={() => setOpenCalender(false)}
                 centered
                 overlayOpacity={0.5}
-                overlayColor={pallete.gray3}
+                overlayColor={pallet.gray3}
                 withCloseButton={false}
                 padding="lg"
                 size={400}
@@ -168,8 +168,8 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                         dayStyle={(date, modifiers) => {
                             if (modifiers.selected) {
                                 return {
-                                    background: pallete.teal7,
-                                    border: `2px solid ${pallete.teal3}`,
+                                    background: pallet.teal7,
+                                    border: `2px solid ${pallet.teal3}`,
                                     pointerEvents: "none",
                                 };
                             }
@@ -200,7 +200,7 @@ function WorkInfoEditor({ agentList }: SlectDateProps) {
                                     cycle: cycle,
                                 })
                             );
-                            setOpenCalander(false);
+                            setOpenCalender(false);
                         }}
                     >
                         새로운 근무일지 생성

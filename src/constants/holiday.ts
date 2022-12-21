@@ -1,4 +1,4 @@
-const HOLLIDAY = {
+const HOLIDAY = {
     "2022": [
         "2022-1-1",
         "2022-1-31",
@@ -39,4 +39,4 @@ const HOLLIDAY = {
         "2023-12-25",
     ],
 };
-export { HOLLIDAY };
+export { HOLIDAY };

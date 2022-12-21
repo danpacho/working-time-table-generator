@@ -1,8 +1,8 @@
-export type PalleteType = keyof Pallete;
+export type PalletType = keyof Pallet;
 
-export type Pallete = typeof pallete;
+export type Pallet = typeof pallet;
 
-const pallete = {
+const pallet = {
     white: "#FFFFFF",
     transparent: "transparent",
 
@@ -85,4 +85,4 @@ const pallete = {
     primary4: "#F2E2CE",
 };
 
-export default pallete;
+export default pallet;

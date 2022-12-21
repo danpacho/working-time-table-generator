@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 
-import { HOLLIDAY } from "@constants/holliday";
+import { HOLIDAY } from "@constants/holiday";
 import { WORK_INFO } from "@constants/workInfo";
 import { getIterationArray, shift, shuffle } from "@core/array";
 
 const DAY = ["일", "월", "화", "수", "목", "금", "토"] as const;
-const HOLLIDAY_INDEX = [0, 6];
+const HOLIDAY_INDEX = [0, 6];
 type DAY_TYPE = typeof DAY[number];
 
 const getDay = (time: string): DAY_TYPE => DAY[new Date(time).getDay()];
@@ -16,7 +16,7 @@ const dateEqualizer = (date: dayjs.Dayjs) =>
 const addDayToString = (currentDate: dayjs.Dayjs, updateDayMount: number) =>
     currentDate.add(updateDayMount, "day");
 
-const isHolliday = (time: dayjs.Dayjs) => HOLLIDAY_INDEX.includes(time.day());
+const isHoliday = (time: dayjs.Dayjs) => HOLIDAY_INDEX.includes(time.day());
 
 const numToDate = (dateNum: number) => {
     const date = `${String(dateNum).slice(0, 4)}-${String(dateNum).slice(
@@ -38,15 +38,15 @@ const getWorkingDay = (
         .reduce<dayjs.Dayjs[]>((accWorkDayList, currDate) => {
             const date = dayjs(currDate);
 
-            if (HOLLIDAY[currentYear].includes(dateEqualizer(date)))
+            if (HOLIDAY[currentYear].includes(dateEqualizer(date)))
                 return accWorkDayList;
 
-            if (!isHolliday(date)) return [...accWorkDayList, currDate];
+            if (!isHoliday(date)) return [...accWorkDayList, currDate];
 
             if (accWorkDayList.includes(currDate)) {
                 const test = addDayToString(date, 1);
                 const testDate = dayjs(test);
-                const validatedDate = isHolliday(testDate)
+                const validatedDate = isHoliday(testDate)
                     ? addDayToString(testDate, 1)
                     : test;
                 return [...accWorkDayList, validatedDate];
@@ -148,7 +148,7 @@ export {
     numToDate,
     dateEqualizer,
     getDay,
-    isHolliday,
+    isHoliday,
     getWorkInfo,
     getWorkCycleInfo,
     addDayToString,
