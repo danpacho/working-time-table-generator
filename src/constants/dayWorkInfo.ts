@@ -1,11 +1,11 @@
-import type { PalleteType } from "@styles/utils/pallete";
+import type { PalletType } from "@styles/utils/pallet";
 
 type WorkType = "access-control" | "shuttle-operation";
 const DAY_WORK_INFO: {
     time: string | string[];
     workHour: string;
     color: string;
-    borderColor: PalleteType;
+    borderColor: PalletType;
     workOrder: number;
     workType: WorkType;
 }[] = [
@@ -26,8 +26,8 @@ const DAY_WORK_INFO: {
         workType: "access-control",
     },
     {
-        time: ["09:30 ~ 11:30", "13:30 ~ 15:30"],
-        workHour: "4시간",
+        time: ["09:30 ~ 11:30", "13:30 ~ 15:15"],
+        workHour: "3시간 45분",
         color: "teal",
         borderColor: "teal4",
         workOrder: 2,
