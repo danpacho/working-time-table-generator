@@ -48,6 +48,13 @@ const getUpdatedWorkInfo = (
         };
 
     const { start, end } = exchangeWorkInfo;
+    const startDate = workInfoArray.find((data) => data.date === start.date);
+
+    if (startDate?.workSheet.includes(end.workName) && start.date !== end.date)
+        return {
+            isValidate: false,
+            updatedWorkInfoArray: null,
+        };
 
     const dateInfo = workInfoArray.map(({ date }) => date);
     const exchangeStartIndex = dateInfo.indexOf(start.date);
@@ -340,9 +347,15 @@ const DayWorkSheet = ({
                             }
                         );
                         const isInvalidateExchange =
-                            workSheet.includes(
+                            (workSheet.includes(
                                 updatedExchangeWorkInfo.start?.workName ?? "EMPTY"
-                            ) && date !== updatedExchangeWorkInfo.start?.date;
+                            ) &&
+                                date !== updatedExchangeWorkInfo.start?.date) ||
+                            (workSheet.includes(
+                                updatedExchangeWorkInfo.end?.workName ?? "EMPTY"
+                            ) &&
+                                date !== updatedExchangeWorkInfo.end?.date);
+
                         if (isInvalidateExchange) return;
 
                         setExchangeWorkInfo(updatedExchangeWorkInfo);
