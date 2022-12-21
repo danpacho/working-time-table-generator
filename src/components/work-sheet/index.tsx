@@ -37,20 +37,29 @@ interface ExchangeWorkInfo {
 const getUpdatedWorkInfo = (
     workInfoArray: WorkInfoType<string>[],
     exchangeWorkInfo: ExchangeWorkInfo
-) => {
-    if (exchangeWorkInfo.start === null) return null;
-    if (exchangeWorkInfo.end === null) return null;
+): {
+    isValidate: true | false;
+    updatedWorkInfoArray: WorkInfoType<string>[] | null;
+} => {
+    if (exchangeWorkInfo.start === null || exchangeWorkInfo.end === null)
+        return {
+            isValidate: false,
+            updatedWorkInfoArray: null,
+        };
 
-    const dateArray = workInfoArray.map(({ date }) => date);
-    const exchangeStartIndex = dateArray.indexOf(exchangeWorkInfo.start.date);
-    const exchangeEndIndex = dateArray.indexOf(exchangeWorkInfo.end.date);
+    const { start, end } = exchangeWorkInfo;
 
-    workInfoArray[exchangeStartIndex].workSheet[exchangeWorkInfo.start.workOrder] =
-        exchangeWorkInfo.end.workName;
-    workInfoArray[exchangeEndIndex].workSheet[exchangeWorkInfo.end.workOrder] =
-        exchangeWorkInfo.start.workName;
+    const dateInfo = workInfoArray.map(({ date }) => date);
+    const exchangeStartIndex = dateInfo.indexOf(start.date);
+    const exchangeEndIndex = dateInfo.indexOf(end.date);
 
-    return workInfoArray;
+    workInfoArray[exchangeStartIndex].workSheet[start.workOrder] = end.workName;
+    workInfoArray[exchangeEndIndex].workSheet[end.workOrder] = start.workName;
+
+    return {
+        isValidate: true,
+        updatedWorkInfoArray: workInfoArray,
+    };
 };
 
 const ExchangeWorkContainer = styled(Box)`
@@ -82,8 +91,8 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
     const cycleNumber = worker?.length;
 
     useEffect(() => {
-        const isDataExsists = workInfoArray?.length >= 1;
-        if (isDataExsists) {
+        const isDataExist = workInfoArray?.length >= 1;
+        if (isDataExist) {
             if (workInfoArray[0].workSheet.length !== WORK_INFO.WORK_PER_DAY) {
                 setWorkInfoArray([]);
                 setExchangeWorkInfo(null);
@@ -169,12 +178,17 @@ function WorkSheet({ workInfoArray, setWorkInfoArray }: WorkSheetProps) {
                                 variant="filled"
                                 color="teal"
                                 onClick={() => {
-                                    const updatedWorkInfoArray = getUpdatedWorkInfo(
-                                        workInfoArray,
-                                        exchangeWorkInfo!
-                                    );
-                                    if (updatedWorkInfoArray !== null) {
-                                        setWorkInfoArray(updatedWorkInfoArray);
+                                    const { updatedWorkInfoArray, isValidate } =
+                                        getUpdatedWorkInfo(
+                                            workInfoArray,
+                                            exchangeWorkInfo!
+                                        );
+
+                                    if (!isValidate) {
+                                        setExchangeWorkInfo(null);
+                                    }
+                                    if (isValidate) {
+                                        setWorkInfoArray(updatedWorkInfoArray!);
                                         setExchangeWorkInfo(null);
                                     }
                                 }}
@@ -325,6 +339,12 @@ const DayWorkSheet = ({
                                 day,
                             }
                         );
+                        const isInvalidateExchange =
+                            workSheet.includes(
+                                updatedExchangeWorkInfo.start?.workName ?? "EMPTY"
+                            ) && date !== updatedExchangeWorkInfo.start?.date;
+                        if (isInvalidateExchange) return;
+
                         setExchangeWorkInfo(updatedExchangeWorkInfo);
                     }}
                     display="flex"
