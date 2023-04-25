@@ -14,17 +14,17 @@ const DAY_WORK_INFO: {
         time: ["09:00 ~ 12:30"],
         workHour: "3시간 30분",
         color: "indigo",
-        borderColor: "blue3",
+        borderColor: "blue5",
         workOrder: 0,
         workType: "access-control",
     },
     {
-        time: ["09:30 ~ 11:30", "13:30 ~ 15:00"],
-        workHour: "3시간 30분",
-        color: "teal",
-        borderColor: "teal5",
+        time: ["13:30 ~ 16:00"],
+        workHour: "2시간 30분",
+        color: "indigo",
+        borderColor: "blue3",
         workOrder: 1,
-        workType: "shuttle-operation",
+        workType: "access-control",
     },
 ];
 
